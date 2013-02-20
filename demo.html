@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Acronymizer - Demo</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script type="text/javascript" src="acronymizer.js"></script>
+        <script type="text/javascript">
+            window.onload = function () {
+                var p = document.getElementById('pElement'),
+                    div1 = document.getElementById('divElement'),
+                    p2 = document.getElementById('pElement2'),
+                    acron = new Acronymizer(p, 'hello');
+
+                acron.go();
+
+                acron = new Acronymizer(div1, 'element');
+                acron.go();
+
+                acron = new Acronymizer(p2, 'ninja', {
+                    nodeType: 'strong'
+                });
+                acron.go();
+            };
+        </script>
+    </head>
+
+    <body>
+        <h1>Acronymizer demo</h1>
+
+        <p id="pElement">Here is a P element where the word hello is acronymized! Hello!</p>
+
+        <div id="divElement">Here is a DIV element that wraps a <span>SPAN element</span> acronymizing the word element.</div>
+
+        <p id="pElement2">Another P here, but the word ninja is wrapped by a STRONG element instead.</p>
+    </body>
+</html>

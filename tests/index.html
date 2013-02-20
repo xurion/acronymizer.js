@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Acronymizer Mocha Tests</title>
+        <link rel="stylesheet" href="lib/mocha.css" />
+    </head>
+    <body>
+        <h1 style="font-size: 16px; margin-top: 0">Acronymizer Mocha Tests</h1>
+        <div id="mocha"></div>
+        <script type="text/javascript" src="lib/chai.js"></script>
+        <script type="text/javascript" src="lib/sinon.js"></script>
+        <script type="text/javascript" src="lib/mocha.js"></script>
+        <script type="text/javascript">
+            mocha.setup('bdd');
+        </script>
+
+        <script type="text/javascript" src="../acronymizer.js"></script>
+        <script type="text/javascript" src="tests/acronymizer.test.js"></script>
+
+        <script type="text/javascript">
+            mocha.run();
+        </script>
+    </body>
+</html>
