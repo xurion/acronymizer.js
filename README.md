@@ -11,7 +11,7 @@ http://github.com/xurion/acronymizer.js
 ### Simple
 
     var div = document.getElementById('myDiv'),
-        acron = new Arconymizer({
+        acron = new Acronymizer({
             element: div,
             pattern: 'CSS'
         });
@@ -21,7 +21,7 @@ http://github.com/xurion/acronymizer.js
 ### Advanced
 
     var div = document.getElementById('myDiv'),
-        acron = new Arconymizer();
+        acron = new Acronymizer();
 
     acron.setElement(div);
     acron.setPattern('PHP');
