@@ -29,7 +29,7 @@ var Acronymizer;
         };
 
         this.setElement = function (element) {
-            if (this.isElement(element) === false) {
+            if (this.isElement(element)) {
                 this.error('The element must be defined as an element');
             }
             this.element = element;
@@ -79,7 +79,7 @@ var Acronymizer;
         };
 
         this.hasClass = function (element, className) {
-            if (this.isElement(element) === false) {
+            if (this.isElement(element)) {
                 this.error('The element must be defined as an element');
             }
             if (typeof className !== 'string') {
@@ -89,11 +89,11 @@ var Acronymizer;
         };
 
         this.allOptionsSet = function () {
-            return (this.isElement(this.element) === true && typeof this.pattern === 'string' && typeof this.wrapper === 'string');
+            return (this.isElement(this.element) && typeof this.pattern === 'string' && typeof this.wrapper === 'string');
         };
 
         this.addClassToElement = function (element, className) {
-            if (this.isElement(element) === false) {
+            if (this.isElement(element)) {
                 this.error('The element argument must be defined as an element');
             }
             if (typeof className !== 'string') {
@@ -101,13 +101,13 @@ var Acronymizer;
             }
             if (element.className === '') {
                 element.className = className;
-            } else if (this.hasClass(element, className) === false) {
+            } else if (this.hasClass(element, className)) {
                 element.className += ' ' + className;
             }
         };
 
         this.addAttributesToElement = function (element, attributes) {
-            if (this.isElement(element) === false) {
+            if (this.isElement(element)) {
                 this.error('The element argument must be defined as an element');
             }
             if (typeof attributes !== 'object') {
@@ -141,7 +141,7 @@ var Acronymizer;
             if (this.isTextNode(node)) {
                 pos = node.data.toUpperCase().indexOf(pattern);
                 if (pos >= 0) {
-                    if (this.hasClass(node.parentNode, 'acronymized') === false) {
+                    if (this.hasClass(node.parentNode, 'acronymized')) {
                         wrapper = document.createElement(wrapperType);
                         middlebit = node.splitText(pos);
                         middlebit.splitText(pattern.length);
@@ -163,7 +163,7 @@ var Acronymizer;
         };
 
         this.go = function () {
-            if (this.allOptionsSet() === false) {
+            if (this.allOptionsSet()) {
                 this.error('All options have not been defined correctly');
             }
             this.innerHighlight(this.element, this.pattern.toUpperCase(), this.wrapper, this.attributes);
