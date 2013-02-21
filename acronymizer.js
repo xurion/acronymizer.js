@@ -10,11 +10,7 @@ var Acronymizer;
 (function () {
     'use strict';
 
-    Acronymizer = function () {
-
-        //set up the defaults
-        this.attributes = {};
-        this.wrapper = 'acron';
+    Acronymizer = function (settings) {
 
         this.error = function (errorMessage) {
             errorMessage = errorMessage || 'Unknown error';
@@ -68,8 +64,12 @@ var Acronymizer;
 
         this.setAttributes = function (attributes) {
             if (typeof attributes !== 'object') {
-                this.error('The attributes arguments must be defined as an object');
+                this.error('The attributes argument must be defined as an object');
             }
+            if (this.attributes === undefined) {
+                this.attributes = {};
+            }
+
             var i;
             for (i in attributes) {
                 if (attributes.hasOwnProperty(i)) {
@@ -168,6 +168,34 @@ var Acronymizer;
             }
             this.innerHighlight(this.element, this.pattern.toUpperCase(), this.wrapper, this.attributes);
         };
+
+        this.init = function (settings) {
+            settings = settings || {};
+
+            if (typeof settings !== 'object') {
+                this.error('Settings must be defined as an object');
+            }
+
+            //set up the settings, if defined. If not, set defaults
+            if (settings.element !== undefined) {
+                this.setElement(settings.element);
+            }
+            if (settings.pattern !== undefined) {
+                this.setPattern(settings.pattern);
+            }
+            if (settings.wrapper !== undefined) {
+                this.setWrapper(settings.wrapper);
+            } else {
+                this.setWrapper('acron');
+            }
+            if (settings.attributes !== undefined) {
+                this.setAttributes(settings.attributes);
+            } else {
+                this.setAttributes({});
+            }
+        };
+
+        this.init(settings);
     };
 
 }());

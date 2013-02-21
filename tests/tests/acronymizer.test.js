@@ -214,10 +214,10 @@ describe('Acronymizer', function () {
         it('should throw an error if the attributes argument is not defined as an object', function () {
             chai.assert.throw(function () {
                 acron.setAttributes();
-            }, Error, 'The attributes arguments must be defined as an object');
+            }, Error, 'The attributes argument must be defined as an object');
             chai.assert.throw(function () {
                 acron.setAttributes('');
-            }, Error, 'The attributes arguments must be defined as an object');
+            }, Error, 'The attributes argument must be defined as an object');
         });
     });
 
@@ -411,6 +411,75 @@ describe('Acronymizer', function () {
             chai.assert.throw(function () {
                 acron.go();
             }, Error, 'All options have not been defined correctly');
+        });
+    });
+
+    describe('init()', function () {
+        it('should be a function', function () {
+            var acron = new Acronymizer();
+            chai.assert.isFunction(acron.init);
+        });
+        it('should accept a settings argument with an element value that sets the element property', function () {
+            var a = document.createElement('a'),
+                acron = new Acronymizer({
+                    element: a
+                });
+
+            chai.assert.deepEqual(acron.element, a);
+        });
+        it('should accept a settings argument with a pattern value that sets the pattern property', function () {
+            var acron = new Acronymizer({
+                    pattern: 'myPattern'
+                });
+
+            chai.assert.strictEqual(acron.pattern, 'myPattern');
+        });
+        it('should accept a settings argument with a wrapper value that sets the wrapper property', function () {
+            var acron = new Acronymizer({
+                    wrapper: 'p'
+                });
+
+            chai.assert.strictEqual(acron.wrapper, 'p');
+        });
+        it('should accept a settings argument with an attributes value that sets the attributes property', function () {
+            var acron = new Acronymizer({
+                    attributes: {
+                        href: 'page.html'
+                    }
+                });
+
+            chai.assert.deepEqual(acron.attributes, {
+                href: 'page.html'
+            });
+        });
+        it('should accept a settings argument that contains element, pattern, wrapper and attributes values and set them to the correct properties', function () {
+            var span = document.createElement('span'),
+                acron;
+
+            span.innerHTML = 'This is my text';
+
+            acron = new Acronymizer({
+                element: span,
+                pattern: 'my',
+                wrapper: 'a',
+                attributes: {
+                    href: 'mixed.html',
+                    title: 'Link'
+                }
+            });
+
+            chai.assert.deepEqual(acron.attributes, {
+                href: 'mixed.html',
+                title: 'Link'
+            });
+        });
+        it('should throw an error if the settings argument is not defined as an object', function () {
+            chai.assert.throw(function () {
+                var acron = new Acronymizer('string');
+            }, Error, 'Settings must be defined as an object');
+            chai.assert.throw(function () {
+                var acron = new Acronymizer(44);
+            }, Error, 'Settings must be defined as an object');
         });
     });
 });
