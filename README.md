@@ -4,7 +4,7 @@ Wraps text in HTML with an element (acron by default) whilst keeping any bound e
 
 ## Link
 
-http://github.com/xurion/acronymizer.js
+https://github.com/xurion/acronymizer.js
 
 ## Examples
 
