@@ -1,5 +1,5 @@
-/*jslint maxerr: 50, indent: 4, sloppy: true*/
-/*globals chai, describe, it, window, Acronymizer*/
+/*jslint maxerr: 50, indent: 4, es5: true*/
+/*globals document, chai, describe, it, before, Acronymizer*/
 
 describe('Acronymizer', function () {
     'use strict';
