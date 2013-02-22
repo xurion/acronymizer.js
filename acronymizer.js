@@ -172,6 +172,7 @@ var Acronymizer;
                         this.addClassToElement(wrapper, 'acronymized');
                         wrapper.appendChild(middleClone);
                         middleBit.parentNode.replaceChild(wrapper, middleBit);
+                        this.fireEvent('afterWrap', [middleClone.data, wrapper]);
                     }
                     skip = 1;
                 }

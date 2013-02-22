@@ -524,6 +524,50 @@ describe('Acronymizer', function () {
             chai.assert.strictEqual(secondAttributeValue.nodeType, 1);
             chai.assert.strictEqual(secondAttributeValue.nodeName, 'SPAN');
         });
+        it('should execute the afterWrap event', function () {
+            var p = document.createElement('p'),
+                eventFired = false;
+
+            p.innerHTML = 'This is some text';
+            acron.setElement(p);
+            acron.setAttribute('className', 'myClass');
+            acron.setPattern('some');
+            acron.setEvent('afterWrap', function () {
+                eventFired = true;
+            });
+            acron.go();
+            chai.assert.isTrue(eventFired);
+        });
+        it('should provide the text that was wrapped as the first attribute of afterWrap', function () {
+            var p = document.createElement('p'),
+                firstAttributeValue;
+
+            p.innerHTML = 'This is some text';
+            acron.setElement(p);
+            acron.setAttribute('className', 'myClass');
+            acron.setPattern('some');
+            acron.setEvent('afterWrap', function (text) {
+                firstAttributeValue = text;
+            });
+            acron.go();
+            chai.assert.strictEqual(firstAttributeValue, 'some');
+        });
+        it('should provide the text wrapper as the second attribute of afterWrap', function () {
+            var p = document.createElement('p'),
+                secondAttributeValue;
+
+            p.innerHTML = 'This is some text';
+            acron.setElement(p);
+            acron.setAttribute('className', 'myClass');
+            acron.setPattern('some');
+            acron.setWrapper('span');
+            acron.setEvent('afterWrap', function (text, wrapper) {
+                secondAttributeValue = wrapper;
+            });
+            acron.go();
+            chai.assert.strictEqual(secondAttributeValue.nodeType, 1);
+            chai.assert.strictEqual(secondAttributeValue.nodeName, 'SPAN');
+        });
         it('should throw an error if the element has not been set', function () {
             acron.element = undefined;
             acron.pattern = 'myPattern';
