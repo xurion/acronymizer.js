@@ -5,7 +5,7 @@ describe('Acronymizer', function () {
     'use strict';
 
     var acron;
-    before(function () {
+    beforeEach(function () {
         acron = new Acronymizer();
     });
 
@@ -18,10 +18,16 @@ describe('Acronymizer', function () {
     it('should have a default wrapper property set to "acron"', function () {
         chai.assert.strictEqual(acron.wrapper, 'acron');
     });
+    it('should have a default attributes property as an empty object', function () {
+        chai.assert.deepEqual(acron.attributes, {});
+    });
+    it('should have a default events property set to an empty object', function () {
+        chai.assert.deepEqual(acron.events, {});
+    });
 
     describe('error()', function () {
         var acron;
-        before(function () {
+        beforeEach(function () {
             acron = new Acronymizer();
         });
 
@@ -42,7 +48,7 @@ describe('Acronymizer', function () {
 
     describe('isElement()', function () {
         var acron;
-        before(function () {
+        beforeEach(function () {
             acron = new Acronymizer();
         });
 
@@ -64,7 +70,7 @@ describe('Acronymizer', function () {
 
     describe('isTextNode()', function () {
         var acron;
-        before(function () {
+        beforeEach(function () {
             acron = new Acronymizer();
         });
 
@@ -84,7 +90,7 @@ describe('Acronymizer', function () {
 
     describe('setElement()', function () {
         var acron;
-        before(function () {
+        beforeEach(function () {
             acron = new Acronymizer();
         });
 
@@ -111,7 +117,7 @@ describe('Acronymizer', function () {
 
     describe('setPattern()', function () {
         var acron;
-        before(function () {
+        beforeEach(function () {
             acron = new Acronymizer();
         });
 
@@ -134,7 +140,7 @@ describe('Acronymizer', function () {
 
     describe('setWrapper()', function () {
         var acron;
-        before(function () {
+        beforeEach(function () {
             acron = new Acronymizer();
         });
 
@@ -162,7 +168,7 @@ describe('Acronymizer', function () {
 
     describe('setAttribute()', function () {
         var acron;
-        before(function () {
+        beforeEach(function () {
             acron = new Acronymizer();
         });
 
@@ -194,7 +200,7 @@ describe('Acronymizer', function () {
 
     describe('setAttributes()', function () {
         var acron;
-        before(function () {
+        beforeEach(function () {
             acron = new Acronymizer();
         });
 
@@ -223,7 +229,7 @@ describe('Acronymizer', function () {
 
     describe('hasClass()', function () {
         var acron;
-        before(function () {
+        beforeEach(function () {
             acron = new Acronymizer();
         });
 
@@ -253,44 +259,65 @@ describe('Acronymizer', function () {
         });
     });
 
-    describe('allOptionsSet()', function () {
+    describe('isElementSet()', function () {
         var acron;
-        before(function () {
+        beforeEach(function () {
             acron = new Acronymizer();
         });
 
         it('should be a function', function () {
-            chai.assert.isFunction(acron.allOptionsSet);
+            chai.assert.isFunction(acron.isElementSet);
         });
-        it('should return true if the element, pattern and wrapper are all defined', function () {
-            acron.element = document.createElement('a');
-            acron.pattern = 'myPattern';
-            acron.wrapper = 'span';
-            chai.assert.strictEqual(acron.allOptionsSet(), true);
+        it('should return true if an element has been set to the instance', function () {
+            var a = document.createElement('a');
+            acron.element = a;
+            chai.assert.isTrue(acron.isElementSet());
         });
-        it('should return false if the element is not defined', function () {
-            acron.element = undefined;
-            acron.pattern = 'myPattern';
-            acron.wrapper = 'span';
-            chai.assert.strictEqual(acron.allOptionsSet(), false);
+        it('should return false if an element has not been defined to the instance', function () {
+            chai.assert.isFalse(acron.isElementSet());
         });
-        it('should return false if the pattern is not defined', function () {
-            acron.element = document.createElement('a');
-            acron.pattern = undefined;
-            acron.wrapper = 'span';
-            chai.assert.strictEqual(acron.allOptionsSet(), false);
+    });
+
+    describe('isPatternSet()', function () {
+        var acron;
+        beforeEach(function () {
+            acron = new Acronymizer();
         });
-        it('should return false if the wrapper is not defined', function () {
-            acron.element = document.createElement('a');
-            acron.pattern = 'myPattern';
+
+        it('should be a function', function () {
+            chai.assert.isFunction(acron.isPatternSet);
+        });
+        it('should return true if a pattern has been set to the instance', function () {
+            acron.pattern = 'string';
+            chai.assert.isTrue(acron.isPatternSet());
+        });
+        it('should return false if a pattern has not been set to the instance', function () {
+            chai.assert.isFalse(acron.isPatternSet());
+        });
+    });
+
+    describe('isWrapperSet()', function () {
+        var acron;
+        beforeEach(function () {
+            acron = new Acronymizer();
+        });
+
+        it('should be a function', function () {
+            chai.assert.isFunction(acron.isWrapperSet);
+        });
+        it('should return true if a wrapper is defined to the instance', function () {
+            acron.wrapper = 'p';
+            chai.assert.isTrue(acron.isWrapperSet());
+        });
+        it('should return false if a wrapper is not defined to the instance', function () {
             acron.wrapper = undefined;
-            chai.assert.strictEqual(acron.allOptionsSet(), false);
+            chai.assert.isFalse(acron.isWrapperSet());
         });
     });
 
     describe('addClassToElement()', function () {
         var acron;
-        before(function () {
+        beforeEach(function () {
             acron = new Acronymizer();
         });
 
@@ -335,7 +362,7 @@ describe('Acronymizer', function () {
 
     describe('addAttributesToElement()', function () {
         var acron;
-        before(function () {
+        beforeEach(function () {
             acron = new Acronymizer();
         });
 
@@ -365,9 +392,74 @@ describe('Acronymizer', function () {
         });
     });
 
+    describe('setEvent()', function () {
+        var acron;
+        beforeEach(function () {
+            acron = new Acronymizer();
+        });
+
+        it('should be a function', function () {
+            chai.assert.isFunction(acron.setEvent);
+        });
+        it('should accept a name argument and a func argument and set them to the events property', function () {
+            acron.setEvent('myEvent', function () {});
+            chai.assert.isFunction(acron.events.myEvent);
+        });
+        it('should throw an error if the name argument is not defined as a string', function () {
+            chai.assert.throw(function () {
+                acron.setEvent(undefined, function () {});
+            }, Error, 'The name argument must be defined as a string');
+        });
+        it('should throw an error of the func argument is not defined as a function', function () {
+            chai.assert.throw(function () {
+                acron.setEvent('myEvent', undefined);
+            }, Error, 'The func argument must be defined as a function');
+        });
+    });
+
+    describe('fireEvent()', function () {
+        var acron;
+        beforeEach(function () {
+            acron = new Acronymizer();
+        });
+
+        it('should be a function', function () {
+            chai.assert.isFunction(acron.fireEvent);
+        });
+        it('should accept a name argument and execute the stored event in the events property', function () {
+            var num = 1;
+            acron.events.myEvent = function () {
+                num = 2;
+            };
+            acron.fireEvent('myEvent');
+            chai.assert.strictEqual(num, 2);
+        });
+        it('should accept an args argument defined as an array and provide them to the executed function', function () {
+            var arg1Value,
+                arg2Value,
+                arg3Value;
+
+            acron.events.myEvent = function (arg1, arg2, arg3) {
+                arg1Value = arg1;
+                arg2Value = arg2;
+                arg3Value = arg3;
+            };
+
+            acron.fireEvent('myEvent', ['string', 52, {}]);
+            chai.assert.strictEqual(arg1Value, 'string');
+            chai.assert.strictEqual(arg2Value, 52);
+            chai.assert.deepEqual(arg3Value, {});
+        });
+        it('should not throw an error if the event does not exist', function () {
+            chai.assert.doesNotThrow(function () {
+                acron.fireEvent('string');
+            });
+        });
+    });
+
     describe('go()', function () {
         var acron;
-        before(function () {
+        beforeEach(function () {
             acron = new Acronymizer();
         });
 
@@ -388,13 +480,57 @@ describe('Acronymizer', function () {
             chai.assert.strictEqual(newElement.length, 1);
             chai.expect(newElement[0].className.indexOf('myClass')).to.be.above(-1);
         });
+        it('should execute the beforeWrap event', function () {
+            var p = document.createElement('p'),
+                eventFired = false;
+
+            p.innerHTML = 'This is some text';
+            acron.setElement(p);
+            acron.setAttribute('className', 'myClass');
+            acron.setPattern('some');
+            acron.setEvent('beforeWrap', function () {
+                eventFired = true;
+            });
+            acron.go();
+            chai.assert.isTrue(eventFired);
+        });
+        it('should provide the text that is about to be wrapped as the first attribute of beforeWrap', function () {
+            var p = document.createElement('p'),
+                firstAttributeValue;
+
+            p.innerHTML = 'This is some text';
+            acron.setElement(p);
+            acron.setAttribute('className', 'myClass');
+            acron.setPattern('some');
+            acron.setEvent('beforeWrap', function (text) {
+                firstAttributeValue = text;
+            });
+            acron.go();
+            chai.assert.strictEqual(firstAttributeValue, 'some');
+        });
+        it('should provide the wrapper that is about to be wrap the text as the second attribute of beforeWrap', function () {
+            var p = document.createElement('p'),
+                secondAttributeValue;
+
+            p.innerHTML = 'This is some text';
+            acron.setElement(p);
+            acron.setAttribute('className', 'myClass');
+            acron.setPattern('some');
+            acron.setWrapper('span');
+            acron.setEvent('beforeWrap', function (text, wrapper) {
+                secondAttributeValue = wrapper;
+            });
+            acron.go();
+            chai.assert.strictEqual(secondAttributeValue.nodeType, 1);
+            chai.assert.strictEqual(secondAttributeValue.nodeName, 'SPAN');
+        });
         it('should throw an error if the element has not been set', function () {
             acron.element = undefined;
             acron.pattern = 'myPattern';
             acron.wrapper = 'a';
             chai.assert.throw(function () {
                 acron.go();
-            }, Error, 'All options have not been defined correctly');
+            }, Error, 'An element has not been defined. Use the setElement() method to set an element');
         });
         it('should throw an error if the pattern has not been set', function () {
             acron.element = document.createElement('div');
@@ -402,7 +538,7 @@ describe('Acronymizer', function () {
             acron.wrapper = 'a';
             chai.assert.throw(function () {
                 acron.go();
-            }, Error, 'All options have not been defined correctly');
+            }, Error, 'A pattern has not been defined. Use the set pattern method to set a pattern');
         });
         it('should throw an error if the wrapper has not been set', function () {
             acron.element = document.createElement('div');
@@ -410,7 +546,7 @@ describe('Acronymizer', function () {
             acron.wrapper = undefined;
             chai.assert.throw(function () {
                 acron.go();
-            }, Error, 'All options have not been defined correctly');
+            }, Error, 'A wrapper has not been defined. Use the setWrapper method to set a wrapper');
         });
     });
 

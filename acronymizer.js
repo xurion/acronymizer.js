@@ -29,7 +29,7 @@ var Acronymizer;
         };
 
         this.setElement = function (element) {
-            if (this.isElement(element)) {
+            if (!this.isElement(element)) {
                 this.error('The element must be defined as an element');
             }
             this.element = element;
@@ -66,9 +66,6 @@ var Acronymizer;
             if (typeof attributes !== 'object') {
                 this.error('The attributes argument must be defined as an object');
             }
-            if (this.attributes === undefined) {
-                this.attributes = {};
-            }
 
             var i;
             for (i in attributes) {
@@ -79,7 +76,7 @@ var Acronymizer;
         };
 
         this.hasClass = function (element, className) {
-            if (this.isElement(element)) {
+            if (!this.isElement(element)) {
                 this.error('The element must be defined as an element');
             }
             if (typeof className !== 'string') {
@@ -88,12 +85,20 @@ var Acronymizer;
             return element.className.replace(/[\n\t]/g, " ").indexOf(className) > -1;
         };
 
-        this.allOptionsSet = function () {
-            return (this.isElement(this.element) && typeof this.pattern === 'string' && typeof this.wrapper === 'string');
+        this.isElementSet = function () {
+            return this.element !== undefined && this.isElement(this.element);
+        };
+
+        this.isPatternSet = function () {
+            return typeof this.pattern == 'string' && this.pattern !== '';
+        };
+
+        this.isWrapperSet = function () {
+            return typeof this.wrapper === 'string' && this.wrapper !== '';
         };
 
         this.addClassToElement = function (element, className) {
-            if (this.isElement(element)) {
+            if (!this.isElement(element)) {
                 this.error('The element argument must be defined as an element');
             }
             if (typeof className !== 'string') {
@@ -101,13 +106,13 @@ var Acronymizer;
             }
             if (element.className === '') {
                 element.className = className;
-            } else if (this.hasClass(element, className)) {
+            } else if (!this.hasClass(element, className)) {
                 element.className += ' ' + className;
             }
         };
 
         this.addAttributesToElement = function (element, attributes) {
-            if (this.isElement(element)) {
+            if (!this.isElement(element)) {
                 this.error('The element argument must be defined as an element');
             }
             if (typeof attributes !== 'object') {
@@ -126,6 +131,22 @@ var Acronymizer;
             return element;
         };
 
+        this.setEvent = function (name, func) {
+            if (typeof name !== 'string') {
+                this.error('The name argument must be defined as a string');
+            }
+            if (typeof func !== 'function') {
+                this.error('The func argument must be defined as a function');
+            }
+            this.events[name] = func;
+        };
+
+        this.fireEvent = function (name, args) {
+            if (typeof this.events[name] === 'function') {
+                this.events[name].apply(this, args);
+            }
+        };
+
         /**
          * Wraps the given pat (pattern) in the given node with the given
          * nodeType.
@@ -134,23 +155,23 @@ var Acronymizer;
             var skip = 0,
                 pos,
                 wrapper,
-                middlebit,
-                middleclone,
+                middleBit,
+                middleClone,
                 i;
 
             if (this.isTextNode(node)) {
                 pos = node.data.toUpperCase().indexOf(pattern);
                 if (pos >= 0) {
-                    if (this.hasClass(node.parentNode, 'acronymized')) {
+                    if (!this.hasClass(node.parentNode, 'acronymized')) {
                         wrapper = document.createElement(wrapperType);
-                        middlebit = node.splitText(pos);
-                        middlebit.splitText(pattern.length);
-                        middleclone = middlebit.cloneNode(true);
-
-                        wrapper.className = 'acronymized';
+                        middleBit = node.splitText(pos);
+                        middleBit.splitText(pattern.length);
+                        middleClone = middleBit.cloneNode(true);
                         this.addAttributesToElement(wrapper, wrapperAttributes);
-                        wrapper.appendChild(middleclone);
-                        middlebit.parentNode.replaceChild(wrapper, middlebit);
+                        this.fireEvent('beforeWrap', [middleClone.data, wrapper]);
+                        this.addClassToElement(wrapper, 'acronymized');
+                        wrapper.appendChild(middleClone);
+                        middleBit.parentNode.replaceChild(wrapper, middleBit);
                     }
                     skip = 1;
                 }
@@ -163,8 +184,14 @@ var Acronymizer;
         };
 
         this.go = function () {
-            if (this.allOptionsSet()) {
-                this.error('All options have not been defined correctly');
+            if (!this.isElementSet()) {
+                this.error('An element has not been defined. Use the setElement() method to set an element');
+            }
+            if (!this.isPatternSet()) {
+                this.error('A pattern has not been defined. Use the set pattern method to set a pattern');
+            }
+            if (!this.isWrapperSet()) {
+                this.error('A wrapper has not been defined. Use the setWrapper method to set a wrapper');
             }
             this.innerHighlight(this.element, this.pattern.toUpperCase(), this.wrapper, this.attributes);
         };
@@ -176,22 +203,27 @@ var Acronymizer;
                 this.error('Settings must be defined as an object');
             }
 
-            //set up the settings, if defined. If not, set defaults
+            //set defaults
+            this.attributes = {};
+            this.events = {};
+
+            //set the element if defined
             if (settings.element !== undefined) {
                 this.setElement(settings.element);
             }
+            //set the pattern
             if (settings.pattern !== undefined) {
                 this.setPattern(settings.pattern);
             }
+            //set the wrapper if defined, if not set it to default "acron"
             if (settings.wrapper !== undefined) {
                 this.setWrapper(settings.wrapper);
             } else {
                 this.setWrapper('acron');
             }
+            //set the attributes if defined, if not, set to default {}
             if (settings.attributes !== undefined) {
                 this.setAttributes(settings.attributes);
-            } else {
-                this.setAttributes({});
             }
         };
 
