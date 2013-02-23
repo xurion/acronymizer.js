@@ -90,7 +90,7 @@ var Acronymizer;
         };
 
         this.isPatternSet = function () {
-            return typeof this.pattern == 'string' && this.pattern !== '';
+            return typeof this.pattern === 'string' && this.pattern !== '';
         };
 
         this.isWrapperSet = function () {
@@ -173,6 +173,7 @@ var Acronymizer;
                         wrapper.appendChild(middleClone);
                         middleBit.parentNode.replaceChild(wrapper, middleBit);
                         this.fireEvent('afterWrap', [middleClone.data, wrapper]);
+                        this.wrappers.push(wrapper);
                     }
                     skip = 1;
                 }
@@ -195,6 +196,8 @@ var Acronymizer;
                 this.error('A wrapper has not been defined. Use the setWrapper method to set a wrapper');
             }
             this.innerHighlight(this.element, this.pattern.toUpperCase(), this.wrapper, this.attributes);
+            this.fireEvent('afterWrapAll', [this.wrappers]);
+            this.wrappers = [];
         };
 
         this.init = function (settings) {
@@ -207,6 +210,7 @@ var Acronymizer;
             //set defaults
             this.attributes = {};
             this.events = {};
+            this.wrappers = [];
 
             //set the element if defined
             if (settings.element !== undefined) {

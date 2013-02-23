@@ -486,7 +486,6 @@ describe('Acronymizer', function () {
 
             p.innerHTML = 'This is some text';
             acron.setElement(p);
-            acron.setAttribute('className', 'myClass');
             acron.setPattern('some');
             acron.setEvent('beforeWrap', function () {
                 eventFired = true;
@@ -494,35 +493,33 @@ describe('Acronymizer', function () {
             acron.go();
             chai.assert.isTrue(eventFired);
         });
-        it('should provide the text that is about to be wrapped as the first attribute of beforeWrap', function () {
+        it('should provide the text that is about to be wrapped as the first argument of beforeWrap', function () {
             var p = document.createElement('p'),
-                firstAttributeValue;
+                firstArgumentValue;
 
             p.innerHTML = 'This is some text';
             acron.setElement(p);
-            acron.setAttribute('className', 'myClass');
             acron.setPattern('some');
             acron.setEvent('beforeWrap', function (text) {
-                firstAttributeValue = text;
+                firstArgumentValue = text;
             });
             acron.go();
-            chai.assert.strictEqual(firstAttributeValue, 'some');
+            chai.assert.strictEqual(firstArgumentValue, 'some');
         });
-        it('should provide the wrapper that is about to be wrap the text as the second attribute of beforeWrap', function () {
+        it('should provide the wrapper that is about to be wrap the text as the second argument of beforeWrap', function () {
             var p = document.createElement('p'),
-                secondAttributeValue;
+                secondArgumentValue;
 
             p.innerHTML = 'This is some text';
             acron.setElement(p);
-            acron.setAttribute('className', 'myClass');
             acron.setPattern('some');
             acron.setWrapper('span');
             acron.setEvent('beforeWrap', function (text, wrapper) {
-                secondAttributeValue = wrapper;
+                secondArgumentValue = wrapper;
             });
             acron.go();
-            chai.assert.strictEqual(secondAttributeValue.nodeType, 1);
-            chai.assert.strictEqual(secondAttributeValue.nodeName, 'SPAN');
+            chai.assert.strictEqual(secondArgumentValue.nodeType, 1);
+            chai.assert.strictEqual(secondArgumentValue.nodeName, 'SPAN');
         });
         it('should execute the afterWrap event', function () {
             var p = document.createElement('p'),
@@ -530,7 +527,6 @@ describe('Acronymizer', function () {
 
             p.innerHTML = 'This is some text';
             acron.setElement(p);
-            acron.setAttribute('className', 'myClass');
             acron.setPattern('some');
             acron.setEvent('afterWrap', function () {
                 eventFired = true;
@@ -538,35 +534,64 @@ describe('Acronymizer', function () {
             acron.go();
             chai.assert.isTrue(eventFired);
         });
-        it('should provide the text that was wrapped as the first attribute of afterWrap', function () {
+        it('should provide the text that was wrapped as the first argument of afterWrap', function () {
             var p = document.createElement('p'),
-                firstAttributeValue;
+                firstArgumentValue;
 
             p.innerHTML = 'This is some text';
             acron.setElement(p);
             acron.setAttribute('className', 'myClass');
             acron.setPattern('some');
             acron.setEvent('afterWrap', function (text) {
-                firstAttributeValue = text;
+                firstArgumentValue = text;
             });
             acron.go();
-            chai.assert.strictEqual(firstAttributeValue, 'some');
+            chai.assert.strictEqual(firstArgumentValue, 'some');
         });
-        it('should provide the text wrapper as the second attribute of afterWrap', function () {
+        it('should provide the text wrapper as the second argument of afterWrap', function () {
             var p = document.createElement('p'),
-                secondAttributeValue;
+                secondArgumentValue;
 
             p.innerHTML = 'This is some text';
             acron.setElement(p);
-            acron.setAttribute('className', 'myClass');
             acron.setPattern('some');
             acron.setWrapper('span');
             acron.setEvent('afterWrap', function (text, wrapper) {
-                secondAttributeValue = wrapper;
+                secondArgumentValue = wrapper;
             });
             acron.go();
-            chai.assert.strictEqual(secondAttributeValue.nodeType, 1);
-            chai.assert.strictEqual(secondAttributeValue.nodeName, 'SPAN');
+            chai.assert.strictEqual(secondArgumentValue.nodeType, 1);
+            chai.assert.strictEqual(secondArgumentValue.nodeName, 'SPAN');
+        });
+        it('should execute the afterWrapAll event', function () {
+            var p = document.createElement('p'),
+                eventFired = false;
+
+            p.innerHTML = 'This is some text';
+            acron.setElement(p);
+            acron.setPattern('some');
+            acron.setEvent('afterWrapAll', function () {
+                eventFired = true;
+            });
+            acron.go();
+            chai.assert.isTrue(eventFired);
+        });
+        it('should provide an array of all the wrap elements that were added as the first argument of afterWrapAll', function () {
+            var p = document.createElement('p'),
+                firstArgumentValue;
+
+            p.innerHTML = 'This is some text that mentions some twice';
+            acron.setElement(p);
+            acron.setAttribute('className', 'myClass');
+            acron.setPattern('some');
+            acron.setWrapper('a');
+            acron.setEvent('afterWrapAll', function (wrappers) {
+                firstArgumentValue = wrappers;
+            });
+            acron.go();
+            chai.assert.isArray(firstArgumentValue);
+            chai.assert.strictEqual(firstArgumentValue.length, 2);
+            chai.assert.strictEqual(firstArgumentValue[0].nodeName, 'A');
         });
         it('should throw an error if the element has not been set', function () {
             acron.element = undefined;
