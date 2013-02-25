@@ -224,7 +224,7 @@ var Acronymizer;
             if (settings.wrapper !== undefined) {
                 this.setWrapper(settings.wrapper);
             } else {
-                this.setWrapper('acron');
+                this.setWrapper('abbr');
             }
             //set the attributes if defined, if not, set to default {}
             if (settings.attributes !== undefined) {

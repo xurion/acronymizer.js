@@ -15,8 +15,8 @@ describe('Acronymizer', function () {
     it('should return an instance of itself when initialised', function () {
         chai.assert.instanceOf(acron, Acronymizer);
     });
-    it('should have a default wrapper property set to "acron"', function () {
-        chai.assert.strictEqual(acron.wrapper, 'acron');
+    it('should have a default wrapper property set to "abbr"', function () {
+        chai.assert.strictEqual(acron.wrapper, 'abbr');
     });
     it('should have a default attributes property as an empty object', function () {
         chai.assert.deepEqual(acron.attributes, {});
@@ -475,7 +475,7 @@ describe('Acronymizer', function () {
             acron.setAttribute('className', 'myClass');
             acron.setPattern('some');
             acron.go();
-            newElement = p.getElementsByTagName('acron');
+            newElement = p.getElementsByTagName('abbr');
 
             chai.assert.strictEqual(newElement.length, 1);
             chai.expect(newElement[0].className.indexOf('myClass')).to.be.above(-1);
