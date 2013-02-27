@@ -1,5 +1,5 @@
 /*jslint maxerr: 50, indent: 4, es5: true*/
-/*globals document, chai, describe, it, before, Acronymizer*/
+/*globals document, chai, describe, it, beforeEach, Acronymizer*/
 
 describe('Acronymizer', function () {
     'use strict';
@@ -24,13 +24,11 @@ describe('Acronymizer', function () {
     it('should have a default events property set to an empty object', function () {
         chai.assert.deepEqual(acron.events, {});
     });
+    it('should have a default caseSensitive property set to false', function () {
+        chai.assert.isFalse(acron.caseSensitive);
+    });
 
     describe('error()', function () {
-        var acron;
-        beforeEach(function () {
-            acron = new Acronymizer();
-        });
-
         it('should be a function', function () {
             chai.assert.isFunction(acron.error);
         });
@@ -47,11 +45,6 @@ describe('Acronymizer', function () {
     });
 
     describe('isElement()', function () {
-        var acron;
-        beforeEach(function () {
-            acron = new Acronymizer();
-        });
-
         it('should be a function', function () {
             chai.assert.isFunction(acron.isElement);
         });
@@ -69,11 +62,6 @@ describe('Acronymizer', function () {
     });
 
     describe('isTextNode()', function () {
-        var acron;
-        beforeEach(function () {
-            acron = new Acronymizer();
-        });
-
         it('should be a function', function () {
             chai.assert.isFunction(acron.isTextNode);
         });
@@ -88,12 +76,22 @@ describe('Acronymizer', function () {
         });
     });
 
-    describe('setElement()', function () {
-        var acron;
-        beforeEach(function () {
-            acron = new Acronymizer();
+    describe('isRegExp()', function () {
+        it('should be a function', function () {
+            chai.assert.isFunction(acron.isRegExp);
         });
+        it('should return true if the regexp argument is a regular expression', function () {
+            chai.assert.isTrue(acron.isRegExp(/my pattern/));
+        });
+        it('should return false if the regexp argument is not a regular expression', function () {
+            chai.assert.isFalse(acron.isRegExp('my pattern'));
+        });
+        it('should return false if the regexp argument is not defined', function () {
+            chai.assert.isFalse(acron.isRegExp());
+        });
+    });
 
+    describe('setElement()', function () {
         it('should be a function', function () {
             chai.assert.isFunction(acron.setElement);
         });
@@ -116,34 +114,49 @@ describe('Acronymizer', function () {
     });
 
     describe('setPattern()', function () {
-        var acron;
-        beforeEach(function () {
-            acron = new Acronymizer();
-        });
-
         it('should be a function', function () {
             chai.assert.isFunction(acron.setPattern);
         });
-        it('should accept a single argument defined as a string and set it as the pattern property', function () {
+        it('should accept a pattern argument defined as a string and set it as the pattern property as a global regular expression', function () {
             acron.setPattern('my pattern');
-            chai.assert.strictEqual(acron.pattern, 'my pattern');
+            chai.assert.deepEqual(acron.pattern, /my pattern/gi);
         });
-        it('should throw a "Pattern must be defined as a string" error if the argument is not defined as a string', function () {
+        it('should accept a pattern argument defined as a global regular expression and set it as the pattern property as a global regular expression', function () {
+            acron.setPattern(/my pattern/g);
+            chai.assert.deepEqual(acron.pattern, /my pattern/gi);
+        });
+        it('should accept a pattern argument defined as a non-global case-insensitive regular expression and set it as the pattern property as a global case-insensitive regular expression', function () {
+            acron.setPattern(/my pattern/);
+            chai.assert.deepEqual(acron.pattern, /my pattern/gi);
+        });
+        it('should throw an error if the pattern argument is not defined as a string or regular expression', function () {
             chai.assert.throw(function () {
                 acron.setPattern();
-            }, Error, 'Pattern must be defined as a string');
+            }, Error, 'Pattern must be defined as a string or regular expression');
             chai.assert.throw(function () {
                 acron.setPattern({});
-            }, Error, 'Pattern must be defined as a string');
+            }, Error, 'Pattern must be defined as a string or regular expression');
+        });
+    });
+
+    describe('setIsCaseSensitive()', function () {
+        it('should be a function', function () {
+            chai.assert.isFunction(acron.setIsCaseSensitive);
+        });
+        it('should accept a bool argument defined as a boolean and set the caseSensitive property', function () {
+            acron.setIsCaseSensitive(true);
+            chai.assert.isTrue(acron.caseSensitive);
+            acron.setIsCaseSensitive(false);
+            chai.assert.isFalse(acron.caseSensitive);
+        });
+        it('should throw an error if the bool argument is not defined as a boolean', function () {
+            chai.assert.throw(function () {
+                acron.setIsCaseSensitive('string');
+            }, Error, 'The bool argument must be defined as a boolean');
         });
     });
 
     describe('setWrapper()', function () {
-        var acron;
-        beforeEach(function () {
-            acron = new Acronymizer();
-        });
-
         it('should be a function', function () {
             chai.assert.isFunction(acron.setWrapper);
         });
@@ -167,11 +180,6 @@ describe('Acronymizer', function () {
     });
 
     describe('setAttribute()', function () {
-        var acron;
-        beforeEach(function () {
-            acron = new Acronymizer();
-        });
-
         it('should be a function', function () {
             chai.assert.isFunction(acron.setAttribute);
         });
@@ -199,11 +207,6 @@ describe('Acronymizer', function () {
     });
 
     describe('setAttributes()', function () {
-        var acron;
-        beforeEach(function () {
-            acron = new Acronymizer();
-        });
-
         it('should be a function', function () {
             chai.assert.isFunction(acron.setAttributes);
         });
@@ -228,11 +231,6 @@ describe('Acronymizer', function () {
     });
 
     describe('hasClass()', function () {
-        var acron;
-        beforeEach(function () {
-            acron = new Acronymizer();
-        });
-
         it('should be a function', function () {
             chai.assert.isFunction(acron.hasClass);
         });
@@ -260,11 +258,6 @@ describe('Acronymizer', function () {
     });
 
     describe('isElementSet()', function () {
-        var acron;
-        beforeEach(function () {
-            acron = new Acronymizer();
-        });
-
         it('should be a function', function () {
             chai.assert.isFunction(acron.isElementSet);
         });
@@ -279,16 +272,11 @@ describe('Acronymizer', function () {
     });
 
     describe('isPatternSet()', function () {
-        var acron;
-        beforeEach(function () {
-            acron = new Acronymizer();
-        });
-
         it('should be a function', function () {
             chai.assert.isFunction(acron.isPatternSet);
         });
         it('should return true if a pattern has been set to the instance', function () {
-            acron.pattern = 'string';
+            acron.pattern = /mypattern/g;
             chai.assert.isTrue(acron.isPatternSet());
         });
         it('should return false if a pattern has not been set to the instance', function () {
@@ -297,11 +285,6 @@ describe('Acronymizer', function () {
     });
 
     describe('isWrapperSet()', function () {
-        var acron;
-        beforeEach(function () {
-            acron = new Acronymizer();
-        });
-
         it('should be a function', function () {
             chai.assert.isFunction(acron.isWrapperSet);
         });
@@ -316,11 +299,6 @@ describe('Acronymizer', function () {
     });
 
     describe('addClassToElement()', function () {
-        var acron;
-        beforeEach(function () {
-            acron = new Acronymizer();
-        });
-
         it('should be a function', function () {
             chai.assert.isFunction(acron.addClassToElement);
         });
@@ -361,11 +339,6 @@ describe('Acronymizer', function () {
     });
 
     describe('addAttributesToElement()', function () {
-        var acron;
-        beforeEach(function () {
-            acron = new Acronymizer();
-        });
-
         it('should be a function', function () {
             chai.assert.isFunction(acron.addAttributesToElement);
         });
@@ -393,11 +366,6 @@ describe('Acronymizer', function () {
     });
 
     describe('setEvent()', function () {
-        var acron;
-        beforeEach(function () {
-            acron = new Acronymizer();
-        });
-
         it('should be a function', function () {
             chai.assert.isFunction(acron.setEvent);
         });
@@ -418,11 +386,6 @@ describe('Acronymizer', function () {
     });
 
     describe('fireEvent()', function () {
-        var acron;
-        beforeEach(function () {
-            acron = new Acronymizer();
-        });
-
         it('should be a function', function () {
             chai.assert.isFunction(acron.fireEvent);
         });
@@ -457,12 +420,37 @@ describe('Acronymizer', function () {
         });
     });
 
-    describe('go()', function () {
-        var acron;
-        beforeEach(function () {
-            acron = new Acronymizer();
+    describe('getStringPositions()', function () {
+        it('should be a function', function () {
+            chai.assert.isFunction(acron.getStringPositions);
         });
+        it('should return the positions of the given global regexp argument in the given text argument', function () {
+            var text = 'this is a string with string mentioned twice',
+                regexp = /string/g;
 
+            chai.assert.deepEqual(acron.getStringPositions(text, regexp), [{
+                text: 'string',
+                length: 6,
+                index: 10
+            }, {
+                text: 'string',
+                length: 6,
+                index: 22
+            }]);
+        });
+        it('should return the first position of the given non-global regexp argument in the given text argument', function () {
+            var text = 'this is a string with string mentioned twice',
+                regexp = /string/;
+
+            chai.assert.deepEqual(acron.getStringPositions(text, regexp), [10]);
+        });
+        it('should return an empty array if the text argument or regexp argument are not defined', function () {
+            chai.assert.deepEqual(acron.getStringPositions('text'), []);
+            chai.assert.deepEqual(acron.getStringPositions(undefined, /regex/), []);
+        });
+    });
+
+    describe('go()', function () {
         it('should be a function', function () {
             chai.assert.isFunction(acron.go);
         });
@@ -476,7 +464,6 @@ describe('Acronymizer', function () {
             acron.setPattern('some');
             acron.go();
             newElement = p.getElementsByTagName('abbr');
-
             chai.assert.strictEqual(newElement.length, 1);
             chai.expect(newElement[0].className.indexOf('myClass')).to.be.above(-1);
         });
@@ -611,7 +598,7 @@ describe('Acronymizer', function () {
         });
         it('should throw an error if the wrapper has not been set', function () {
             acron.element = document.createElement('div');
-            acron.pattern = 'myPattern';
+            acron.pattern = /myPattern/gi;
             acron.wrapper = undefined;
             chai.assert.throw(function () {
                 acron.go();
@@ -637,7 +624,7 @@ describe('Acronymizer', function () {
                     pattern: 'myPattern'
                 });
 
-            chai.assert.strictEqual(acron.pattern, 'myPattern');
+            chai.assert.deepEqual(acron.pattern, /myPattern/gi);
         });
         it('should accept a settings argument with a wrapper value that sets the wrapper property', function () {
             var acron = new Acronymizer({

@@ -28,6 +28,10 @@ var Acronymizer;
             return (node !== undefined && this.isElement(node) && node.nodeType === 3);
         };
 
+        this.isRegExp = function (regexp) {
+            return regexp !== undefined && regexp instanceof RegExp;
+        };
+
         this.setElement = function (element) {
             if (!this.isElement(element)) {
                 this.error('The element must be defined as an element');
@@ -36,10 +40,24 @@ var Acronymizer;
         };
 
         this.setPattern = function (pattern) {
-            if (typeof pattern !== 'string') {
-                this.error('Pattern must be defined as a string');
+            if (pattern === undefined || (typeof pattern !== 'string' && !this.isRegExp(pattern))) {
+                this.error('Pattern must be defined as a string or regular expression');
+            }
+            var modifiers = 'g' + ((this.caseSensitive) ? '' : 'i');
+            if (this.isRegExp(pattern)) {
+                pattern = new RegExp(pattern.source, modifiers);
+            }
+            if (typeof pattern === 'string') {
+                pattern = new RegExp(pattern, modifiers);
             }
             this.pattern = pattern;
+        };
+
+        this.setIsCaseSensitive = function (bool) {
+            if (typeof bool !== 'boolean') {
+                this.error('The bool argument must be defined as a boolean');
+            }
+            this.caseSensitive = bool;
         };
 
         this.setWrapper = function (wrapper) {
@@ -90,7 +108,7 @@ var Acronymizer;
         };
 
         this.isPatternSet = function () {
-            return typeof this.pattern === 'string' && this.pattern !== '';
+            return this.pattern !== undefined && this.isRegExp(this.pattern);
         };
 
         this.isWrapperSet = function () {
@@ -118,14 +136,15 @@ var Acronymizer;
             if (typeof attributes !== 'object') {
                 this.error('The attributes argument must be defined as an object');
             }
-            if (typeof attributes.className === 'string') {
-                this.addClassToElement(element, attributes.className);
-                delete attributes.className;
-            }
+
             var i;
             for (i in attributes) {
                 if (attributes.hasOwnProperty(i)) {
-                    element[i] = attributes[i];
+                    if (i === 'className') {
+                        this.addClassToElement(element, attributes.className);
+                    } else {
+                        element[i] = attributes[i];
+                    }
                 }
             }
             return element;
@@ -147,33 +166,78 @@ var Acronymizer;
             }
         };
 
+        this.getStringPositions = function (text, regexp) {
+            if (typeof text !== 'string' || !this.isRegExp(regexp)) {
+                return [];
+            }
+
+            var matches = [],
+                match;
+
+            if (regexp.global === false) {
+                match = regexp.exec(text);
+                matches.push(match.index);
+            } else {
+                while ((match = regexp.exec(text)) !== null) {
+                    matches.push({
+                        text: match[0],
+                        length: match[0].length,
+                        index: match.index
+                    });
+                }
+            }
+
+            return matches;
+        };
+
         /**
          * Wraps the given pat (pattern) in the given node with the given
          * nodeType.
          */
         this.innerHighlight = function (node, pattern, wrapperType, wrapperAttributes) {
             var skip = 0,
-                pos,
+                matches,
+                splitPosition,
+                splitLength,
                 wrapper,
-                middleBit,
-                middleClone,
-                i;
+                split1,
+                remainingText,
+                i,
+                x;
 
-            if (this.isTextNode(node)) {
-                pos = node.data.toUpperCase().indexOf(pattern);
-                if (pos >= 0) {
-                    if (!this.hasClass(node.parentNode, 'acronymized')) {
-                        wrapper = document.createElement(wrapperType);
-                        middleBit = node.splitText(pos);
-                        middleBit.splitText(pattern.length);
-                        middleClone = middleBit.cloneNode(true);
-                        this.addAttributesToElement(wrapper, wrapperAttributes);
-                        this.fireEvent('beforeWrap', [middleClone.data, wrapper]);
-                        this.addClassToElement(wrapper, 'acronymized');
-                        wrapper.appendChild(middleClone);
-                        middleBit.parentNode.replaceChild(wrapper, middleBit);
-                        this.fireEvent('afterWrap', [middleClone.data, wrapper]);
-                        this.wrappers.push(wrapper);
+            if (this.isTextNode(node) && !this.hasClass(node.parentNode, 'acronymized')) {
+                //pos = node.data.indexOf(pattern);
+                matches = this.getStringPositions(node.data, pattern);
+                if (matches.length > 0) {
+                    splitPosition = matches[0].index;
+                    splitLength = matches[0].length;
+                    split1 = node.splitText(splitPosition); //slices away "This is " and leaves textNode as "some text that....."
+                    remainingText = split1.splitText(splitLength); //leaves textNode as sets remainingText as " text that has the ......."
+                    wrapper = document.createElement(wrapperType);
+                    this.addAttributesToElement(wrapper, wrapperAttributes);
+                    this.fireEvent('beforeWrap', [split1.data, wrapper]);
+                    this.addClassToElement(wrapper, 'acronymized');
+                    wrapper.innerHTML = matches[0].text;
+                    split1.parentNode.replaceChild(wrapper, split1);
+                    this.fireEvent('afterWrap', [split1.data, wrapper]);
+                    this.wrappers.push(wrapper);
+                    if (matches.length > 1) {
+                        x = matches[0].index + matches[0].length; //sets the current point in which the replacement has taken place
+                        for (i = 1; i < matches.length; i = i + 1) {
+                            splitPosition = matches[i].index - x;
+                            splitLength = matches[i].length;
+                            split1 = remainingText.splitText(splitPosition); //slices away "This is " and leaves textNode as "some text that....."
+                            remainingText = split1.splitText(splitLength); //leaves textNode as sets remainingText as " text that has the ......."
+                            x = x + (matches[i].index + matches[i].length); //sets the current point in which the replacement has taken place
+                            wrapper = document.createElement(wrapperType);
+                            this.addAttributesToElement(wrapper, wrapperAttributes);
+                            this.fireEvent('beforeWrap', [split1.data, wrapper]);
+                            this.addClassToElement(wrapper, 'acronymized');
+                            wrapper.innerHTML = matches[i].text;
+                            split1.parentNode.replaceChild(wrapper, split1);
+                            this.fireEvent('afterWrap', [split1.data, wrapper]);
+                            this.wrappers.push(wrapper);
+                        }
                     }
                     skip = 1;
                 }
@@ -195,7 +259,7 @@ var Acronymizer;
             if (!this.isWrapperSet()) {
                 this.error('A wrapper has not been defined. Use the setWrapper method to set a wrapper');
             }
-            this.innerHighlight(this.element, this.pattern.toUpperCase(), this.wrapper, this.attributes);
+            this.innerHighlight(this.element, this.pattern, this.wrapper, this.attributes);
             this.fireEvent('afterWrapAll', [this.wrappers]);
             this.wrappers = [];
         };
@@ -211,6 +275,7 @@ var Acronymizer;
             this.attributes = {};
             this.events = {};
             this.wrappers = [];
+            this.caseSensitive = false;
 
             //set the element if defined
             if (settings.element !== undefined) {
