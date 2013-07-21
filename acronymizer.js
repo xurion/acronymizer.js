@@ -3,47 +3,75 @@
 
 /**
  * Dean James' acronymizer.js.
+ *
+ * @param {Object} settings The settings object. Has the following options:
+ *  element - The element to acronymize.
+ *  pattern - The regular expression text pattern.
+ *  wrapper - Sets a custom wrapper type. Defaults to abbr.
  */
+function Acronymizer(settings) {
+    'use strict';
 
-var Acronymizer;
+    settings = settings || {};
+
+    if (typeof settings !== 'object') {
+        this.error('Settings must be defined as an object');
+    }
+
+    //set defaults
+    this.attributes = {};
+    this.events = {};
+    this.wrappers = [];
+    this.caseSensitive = false;
+    this.element = settings.element;
+    this.wrapper = settings.wrapper || 'abbr';
+    this.attributes = settings.attributes || {};
+
+    if (settings.pattern !== undefined) {
+        this.setPattern(settings.pattern);
+    }
+
+}
 
 (function () {
     'use strict';
 
-    Acronymizer = function (settings) {
+    Acronymizer.prototype = {
 
-        this.error = function (errorMessage) {
+        error: function (errorMessage) {
             errorMessage = errorMessage || 'Unknown error';
             throw new Error('Acronymize: ' + errorMessage);
-        };
+        },
 
-        this.isElement = function (element) {
+        isElement: function (element) {
             if (element === undefined) {
                 return false;
             }
             return Object.prototype.hasOwnProperty.call(element, 'nodeName');
-        };
+        },
 
-        this.isTextNode = function (node) {
+        isTextNode: function (node) {
             return (node !== undefined && this.isElement(node) && node.nodeType === 3);
-        };
+        },
 
-        this.isRegExp = function (regexp) {
+        isRegExp: function (regexp) {
             return regexp !== undefined && regexp instanceof RegExp;
-        };
+        },
 
-        this.setElement = function (element) {
+        setElement: function (element) {
             if (!this.isElement(element)) {
                 this.error('The element must be defined as an element');
             }
             this.element = element;
-        };
+        },
 
-        this.setPattern = function (pattern) {
+        setPattern: function (pattern) {
             if (pattern === undefined || (typeof pattern !== 'string' && !this.isRegExp(pattern))) {
                 this.error('Pattern must be defined as a string or regular expression');
             }
+
             var modifiers = 'g' + ((this.caseSensitive) ? '' : 'i');
+
             if (this.isRegExp(pattern)) {
                 pattern = new RegExp(pattern.source, modifiers);
             }
@@ -51,16 +79,16 @@ var Acronymizer;
                 pattern = new RegExp(pattern, modifiers);
             }
             this.pattern = pattern;
-        };
+        },
 
-        this.setIsCaseSensitive = function (bool) {
+        setIsCaseSensitive: function (bool) {
             if (typeof bool !== 'boolean') {
                 this.error('The bool argument must be defined as a boolean');
             }
             this.caseSensitive = bool;
-        };
+        },
 
-        this.setWrapper = function (wrapper) {
+        setWrapper: function (wrapper) {
             if (typeof wrapper !== 'string') {
                 this.error('The wrapper argument must be defined as a string');
             }
@@ -68,9 +96,9 @@ var Acronymizer;
                 this.error('The wrapper argument cannot be an empty string');
             }
             this.wrapper = wrapper;
-        };
+        },
 
-        this.setAttribute = function (key, value) {
+        setAttribute: function (key, value) {
             if (key === '' || key === undefined) {
                 this.error('The key must be defined as a string');
             }
@@ -78,22 +106,23 @@ var Acronymizer;
                 this.error('The value must be defined');
             }
             this.attributes[key] = value;
-        };
+        },
 
-        this.setAttributes = function (attributes) {
+        setAttributes: function (attributes) {
             if (typeof attributes !== 'object') {
                 this.error('The attributes argument must be defined as an object');
             }
 
             var i;
+
             for (i in attributes) {
                 if (attributes.hasOwnProperty(i)) {
                     this.setAttribute(i, attributes[i]);
                 }
             }
-        };
+        },
 
-        this.hasClass = function (element, className) {
+        hasClass: function (element, className) {
             if (!this.isElement(element)) {
                 this.error('The element must be defined as an element');
             }
@@ -101,21 +130,21 @@ var Acronymizer;
                 this.error('The className must be defined as a string');
             }
             return element.className.replace(/[\n\t]/g, " ").indexOf(className) > -1;
-        };
+        },
 
-        this.isElementSet = function () {
+        isElementSet: function () {
             return this.element !== undefined && this.isElement(this.element);
-        };
+        },
 
-        this.isPatternSet = function () {
+        isPatternSet: function () {
             return this.pattern !== undefined && this.isRegExp(this.pattern);
-        };
+        },
 
-        this.isWrapperSet = function () {
+        isWrapperSet: function () {
             return typeof this.wrapper === 'string' && this.wrapper !== '';
-        };
+        },
 
-        this.addClassToElement = function (element, className) {
+        addClassToElement: function (element, className) {
             if (!this.isElement(element)) {
                 this.error('The element argument must be defined as an element');
             }
@@ -127,9 +156,9 @@ var Acronymizer;
             } else if (!this.hasClass(element, className)) {
                 element.className += ' ' + className;
             }
-        };
+        },
 
-        this.addAttributesToElement = function (element, attributes) {
+        addAttributesToElement: function (element, attributes) {
             if (!this.isElement(element)) {
                 this.error('The element argument must be defined as an element');
             }
@@ -138,6 +167,7 @@ var Acronymizer;
             }
 
             var i;
+
             for (i in attributes) {
                 if (attributes.hasOwnProperty(i)) {
                     if (i === 'className') {
@@ -148,9 +178,9 @@ var Acronymizer;
                 }
             }
             return element;
-        };
+        },
 
-        this.setEvent = function (name, func) {
+        setEvent: function (name, func) {
             if (typeof name !== 'string') {
                 this.error('The name argument must be defined as a string');
             }
@@ -158,15 +188,15 @@ var Acronymizer;
                 this.error('The func argument must be defined as a function');
             }
             this.events[name] = func;
-        };
+        },
 
-        this.fireEvent = function (name, args) {
+        fireEvent: function (name, args) {
             if (typeof this.events[name] === 'function') {
                 this.events[name].apply(this, args);
             }
-        };
+        },
 
-        this.getStringPositions = function (text, regexp) {
+        getStringPositions: function (text, regexp) {
             if (typeof text !== 'string' || !this.isRegExp(regexp)) {
                 return [];
             }
@@ -188,13 +218,12 @@ var Acronymizer;
             }
 
             return matches;
-        };
+        },
 
         /**
-         * Wraps the given pat (pattern) in the given node with the given
-         * nodeType.
+         * Wraps the given pattern in the given node with the given nodeType.
          */
-        this.innerHighlight = function (node, pattern, wrapperType, wrapperAttributes) {
+        innerHighlight: function (node, pattern, wrapperType, wrapperAttributes) {
             var skip = 0,
                 matches,
                 splitPosition,
@@ -247,9 +276,9 @@ var Acronymizer;
                 }
             }
             return skip;
-        };
+        },
 
-        this.go = function () {
+        go: function () {
             if (!this.isElementSet()) {
                 this.error('An element has not been defined. Use the setElement() method to set an element');
             }
@@ -262,42 +291,7 @@ var Acronymizer;
             this.innerHighlight(this.element, this.pattern, this.wrapper, this.attributes);
             this.fireEvent('afterWrapAll', [this.wrappers]);
             this.wrappers = [];
-        };
+        }
 
-        this.init = function (settings) {
-            settings = settings || {};
-
-            if (typeof settings !== 'object') {
-                this.error('Settings must be defined as an object');
-            }
-
-            //set defaults
-            this.attributes = {};
-            this.events = {};
-            this.wrappers = [];
-            this.caseSensitive = false;
-
-            //set the element if defined
-            if (settings.element !== undefined) {
-                this.setElement(settings.element);
-            }
-            //set the pattern
-            if (settings.pattern !== undefined) {
-                this.setPattern(settings.pattern);
-            }
-            //set the wrapper if defined, if not set it to default "acron"
-            if (settings.wrapper !== undefined) {
-                this.setWrapper(settings.wrapper);
-            } else {
-                this.setWrapper('abbr');
-            }
-            //set the attributes if defined, if not, set to default {}
-            if (settings.attributes !== undefined) {
-                this.setAttributes(settings.attributes);
-            }
-        };
-
-        this.init(settings);
     };
-
 }());

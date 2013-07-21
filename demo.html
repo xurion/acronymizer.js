@@ -9,15 +9,29 @@
                 var p = document.getElementById('pElement'),
                     div1 = document.getElementById('divElement'),
                     p2 = document.getElementById('pElement2'),
-                    acron = new Acronymizer(p, 'hello');
+                    acron = new Acronymizer({
+                        element: p,
+                        pattern: 'hello',
+                        attributes: {
+                            title: 'hello'
+                        }
+                    });
 
                 acron.go();
 
-                acron = new Acronymizer(div1, 'element');
+                acron = new Acronymizer({
+                    element: div1,
+                    pattern: 'element',
+                    attributes: {
+                        title: 'element'
+                    }
+                });
                 acron.go();
 
-                acron = new Acronymizer(p2, 'ninja', {
-                    nodeType: 'strong'
+                acron = new Acronymizer({
+                    element: p2,
+                    pattern: 'ninja',
+                    wrapper: 'strong'
                 });
                 acron.go();
             };
