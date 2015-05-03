@@ -16,7 +16,7 @@ https://github.com/xurion/acronymizer.js
             pattern: 'CSS'
         });
 
-    acron.go();
+    acron.init();
 
 ### Advanced
 
@@ -27,16 +27,16 @@ https://github.com/xurion/acronymizer.js
     acron.setPattern('PHP');
     acron.setWrapper('a');
     acron.setAttribute('href', 'php.html');
-    acron.go();
+    acron.init();
 
 ## Install
 
 To use acronymizer.js, simply add it to your markup:
 
-    <script type="text/javascript" src="acronymizer.js"></script>
+    <script type="text/javascript" src="acronymizer/dist/acronymizer.min.js"></script>
 
 ## History
 
 acronymizer.js initially started it's life as an easy way to wrap text patterns in markup with acron elements. This allowed me to acronym abbreviations, like CSS and PHP and provide a tooltip as you hovered over it.
 
-It has since been modified to be a JSLinted, tested class to allow the wrapping of any pattern with any element, along with any attributes.
+It has since been modified to be a JSHint-covered, tested class to allow the wrapping of any pattern with any element, along with any attributes.

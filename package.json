@@ -1,6 +1,6 @@
 {
   "name": "acronymizer.js",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Wraps text in HTML with an acronym element.",
   "main": "Gruntfile.js",
   "directories": {
