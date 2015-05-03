@@ -35,6 +35,10 @@ To use acronymizer.js, simply add it to your markup:
 
     <script type="text/javascript" src="acronymizer/dist/acronymizer.min.js"></script>
 
+## Skipping elements
+
+To have acronymizer ignore elements, simply apply the "acronymizer-skip" class to that element. That element, as well as all nested elements, will be skipped.
+
 ## History
 
 acronymizer.js initially started it's life as an easy way to wrap text patterns in markup with acron elements. This allowed me to acronym abbreviations, like CSS and PHP and provide a tooltip as you hovered over it.

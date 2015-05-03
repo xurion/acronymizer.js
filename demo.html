@@ -9,6 +9,7 @@
                 var p = document.getElementById('pElement'),
                     div1 = document.getElementById('divElement'),
                     p2 = document.getElementById('pElement2'),
+                    p3 = document.getElementById('pElement3'),
                     acron = new Acronymizer({
                         element: p,
                         pattern: 'hello',
@@ -34,6 +35,13 @@
                     wrapper: 'strong'
                 });
                 acron.init();
+
+                acron = new Acronymizer({
+                    element: p3,
+                    pattern: 'ninja',
+                    wrapper: 'strong'
+                });
+                acron.init();
             };
         </script>
     </head>
@@ -46,5 +54,7 @@
         <div id="divElement">Here is a DIV element that wraps a <span>SPAN element</span> acronymizing the word element.</div>
 
         <p id="pElement2">Another P here, but the word ninja is wrapped by a STRONG element instead.</p>
+
+        <p id="pElement3" class="acronymizer-skip">A third P here that has a class of "acronymizer-skip" so it will be skipped and the word ninja is not wrapped by a STRONG element.</p>
     </body>
 </html>
