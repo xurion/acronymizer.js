@@ -1,7 +1,8 @@
-/*jslint maxerr: 50, indent: 4, es5: true*/
-/*globals document, chai, describe, it, beforeEach, afterEach, Acronymizer*/
+/*jshint es5:false*/
+/*globals document, describe, it, beforeEach, afterEach, Acronymizer, expect*/
 
 describe('Acronymizer', function () {
+
     'use strict';
 
     var acron;
@@ -12,67 +13,66 @@ describe('Acronymizer', function () {
         acron = undefined;
     });
 
-    it('should be a function', function () {
-        chai.assert.isFunction(Acronymizer);
-    });
     it('should return an instance of itself when initialised', function () {
-        chai.assert.instanceOf(acron, Acronymizer);
+        expect(acron instanceof Acronymizer).toBe(true);
     });
     it('should have a default wrapper property set to "abbr"', function () {
-        chai.assert.strictEqual(acron.wrapper, 'abbr');
+        expect(acron.wrapper).toEqual('abbr');
     });
     it('should have a default attributes property as an empty object', function () {
-        chai.assert.deepEqual(acron.attributes, {});
+        expect(acron.attributes).toEqual({});
     });
     it('should have a default events property set to an empty object', function () {
-        chai.assert.deepEqual(acron.events, {});
+        expect(acron.events).toEqual({});
     });
     it('should have a default caseSensitive property set to false', function () {
-        chai.assert.isFalse(acron.caseSensitive);
+        expect(acron.caseSensitive).toBe(false);
     });
     it('should accept a settings argument with an element value that sets the element property', function () {
-        var a = document.createElement('a'),
-            acron = new Acronymizer({
-                element: a
-            });
+        var a = document.createElement('a');
 
-        chai.assert.deepEqual(acron.element, a);
+        acron = new Acronymizer({
+            element: a
+        });
+
+        expect(acron.element).toEqual(a);
     });
     it('should accept a settings argument with a pattern property as a regular expression that sets the pattern property', function () {
         acron = new Acronymizer({
             pattern: /myPattern/gi
         });
 
-        chai.assert.deepEqual(acron.pattern, /myPattern/gi);
+        expect(acron.pattern).toEqual(/myPattern/gi);
     });
     it('should accept a settings argument with a pattern property as a string that sets the pattern property as a regular expression', function () {
         acron = new Acronymizer({
             pattern: 'myPattern'
         });
 
-        chai.assert.deepEqual(acron.pattern, /myPattern/gi);
+        expect(acron.pattern).toEqual(/myPattern/gi);
     });
     it('should accept a settings argument with a wrapper value that sets the wrapper property', function () {
-        var acron = new Acronymizer({
+        acron = new Acronymizer({
             wrapper: 'p'
         });
 
-        chai.assert.strictEqual(acron.wrapper, 'p');
+        expect(acron.wrapper).toEqual('p');
     });
+
     it('should accept a settings argument with an attributes value that sets the attributes property', function () {
-        var acron = new Acronymizer({
+        acron = new Acronymizer({
             attributes: {
                 href: 'page.html'
             }
         });
 
-        chai.assert.deepEqual(acron.attributes, {
+        expect(acron.attributes).toEqual({
             href: 'page.html'
         });
     });
+
     it('should accept a settings argument that contains element, pattern, wrapper and attributes values and set them to the correct properties', function () {
-        var span = document.createElement('span'),
-            acron;
+        var span = document.createElement('span');
 
         span.innerHTML = 'This is my text';
 
@@ -86,298 +86,254 @@ describe('Acronymizer', function () {
             }
         });
 
-        chai.assert.deepEqual(acron.attributes, {
+        expect(acron.attributes).toEqual({
             href: 'mixed.html',
             title: 'Link'
         });
     });
+
     it('should throw an error if the settings argument is not defined as an object', function () {
-        chai.assert.throw(function () {
-            var acron = new Acronymizer('string');
-        }, Error, 'Settings must be defined as an object');
-        chai.assert.throw(function () {
-            var acron = new Acronymizer(44);
-        }, Error, 'Settings must be defined as an object');
+        expect(function () {
+            acron = new Acronymizer('string');
+        }).toThrowError('Settings must be defined as an object');
+        expect(function () {
+            acron = new Acronymizer(44);
+        }).toThrowError('Settings must be defined as an object');
     });
 
     describe('error()', function () {
-        it('should be a function', function () {
-            chai.assert.isFunction(acron.error);
-        });
         it('should throw an error with the given text', function () {
-            chai.assert.throw(function () {
+            expect(function () {
                 acron.error('Test error');
-            }, Error, 'Test error');
+            }).toThrowError('Test error');
         });
         it('should throw an "unknown error" when no error text is defined', function () {
-            chai.assert.throw(function () {
+            expect(function () {
                 acron.error();
-            }, Error, 'Unknown error');
+            }).toThrowError('Unknown error');
         });
     });
 
     describe('isElement()', function () {
-        it('should be a function', function () {
-            chai.assert.isFunction(acron.isElement);
-        });
         it('should accept an element as an argument and return true', function () {
             var a = document.createElement('a');
-            chai.assert.strictEqual(acron.isElement(a), true);
+            expect(acron.isElement(a)).toBe(true);
         });
         it('should accept a non-element as an argument and return false', function () {
-            chai.assert.strictEqual(acron.isElement({}), false);
-            chai.assert.strictEqual(acron.isElement('string'), false);
+            expect(acron.isElement({})).toBe(false);
+            expect(acron.isElement('string')).toBe(false);
         });
         it('should accept undefined as an argument and return false', function () {
-            chai.assert.strictEqual(acron.isElement(), false);
+            expect(acron.isElement()).toBe(false);
         });
     });
 
     describe('isTextNode()', function () {
-        it('should be a function', function () {
-            chai.assert.isFunction(acron.isTextNode);
-        });
         it('should accept a single node argument and return true if it is a text node', function () {
             var textNode = document.createTextNode('myNode');
-            chai.assert.strictEqual(acron.isTextNode(textNode), true);
+            expect(acron.isTextNode(textNode)).toBe(true);
         });
         it('should return false if the node argument is not defined as a text node', function () {
             var a = document.createElement('a');
-            chai.assert.strictEqual(acron.isTextNode(a), false);
-            chai.assert.strictEqual(acron.isTextNode('string'), false);
+            expect(acron.isTextNode(a)).toBe(false);
+            expect(acron.isTextNode('string')).toBe(false);
         });
     });
 
     describe('isRegExp()', function () {
-        it('should be a function', function () {
-            chai.assert.isFunction(acron.isRegExp);
-        });
         it('should return true if the regexp argument is a regular expression', function () {
-            chai.assert.isTrue(acron.isRegExp(/my pattern/));
+            expect(acron.isRegExp(/my pattern/)).toBe(true);
         });
         it('should return false if the regexp argument is not a regular expression', function () {
-            chai.assert.isFalse(acron.isRegExp('my pattern'));
+            expect(acron.isRegExp('my pattern')).toBe(false);
         });
         it('should return false if the regexp argument is not defined', function () {
-            chai.assert.isFalse(acron.isRegExp());
+            expect(acron.isRegExp()).toBe(false);
         });
     });
 
     describe('setElement()', function () {
-        it('should be a function', function () {
-            chai.assert.isFunction(acron.setElement);
-        });
         it('should accept a single argument defined as an element and set it as the element property', function () {
             var a = document.createElement('a');
             acron.setElement(a);
-            chai.assert.deepEqual(a, acron.element);
+            expect(a).toEqual(acron.element);
         });
         it('should throw an error if the argument is not defined as an element', function () {
-            chai.assert.throw(function () {
+            expect(function () {
                 acron.setElement();
-            }, Error, 'The element must be defined as an element');
-            chai.assert.throw(function () {
+            }).toThrowError('The element must be defined as an element');
+            expect(function () {
                 acron.setElement('string');
-            }, Error, 'The element must be defined as an element');
-            chai.assert.throw(function () {
+            }).toThrowError('The element must be defined as an element');
+            expect(function () {
                 acron.setElement({});
-            }, Error, 'The element must be defined as an element');
+            }).toThrowError('The element must be defined as an element');
         });
     });
 
     describe('setPattern()', function () {
-        it('should be a function', function () {
-            chai.assert.isFunction(acron.setPattern);
-        });
         it('should accept a pattern argument defined as a string and set it as the pattern property as a global regular expression', function () {
             acron.setPattern('my pattern');
-            chai.assert.deepEqual(acron.pattern, /my pattern/gi);
+            expect(acron.pattern).toEqual(/my pattern/gi);
         });
         it('should accept a pattern argument defined as a global regular expression and set it as the pattern property as a global regular expression', function () {
             acron.setPattern(/my pattern/g);
-            chai.assert.deepEqual(acron.pattern, /my pattern/gi);
+            expect(acron.pattern).toEqual(/my pattern/gi);
         });
         it('should accept a pattern argument defined as a non-global case-insensitive regular expression and set it as the pattern property as a global case-insensitive regular expression', function () {
             acron.setPattern(/my pattern/);
-            chai.assert.deepEqual(acron.pattern, /my pattern/gi);
+            expect(acron.pattern).toEqual(/my pattern/gi);
         });
         it('should throw an error if the pattern argument is not defined as a string or regular expression', function () {
-            chai.assert.throw(function () {
+            expect(function () {
                 acron.setPattern();
-            }, Error, 'Pattern must be defined as a string or regular expression');
-            chai.assert.throw(function () {
+            }).toThrowError('Pattern is undefined');
+            expect(function () {
                 acron.setPattern({});
-            }, Error, 'Pattern must be defined as a string or regular expression');
+            }).toThrowError('Pattern must be defined as a string or regular expression');
         });
     });
 
     describe('setIsCaseSensitive()', function () {
-        it('should be a function', function () {
-            chai.assert.isFunction(acron.setIsCaseSensitive);
-        });
         it('should accept a bool argument defined as a boolean and set the caseSensitive property', function () {
             acron.setIsCaseSensitive(true);
-            chai.assert.isTrue(acron.caseSensitive);
+            expect(acron.caseSensitive).toBe(true);
             acron.setIsCaseSensitive(false);
-            chai.assert.isFalse(acron.caseSensitive);
+            expect(acron.caseSensitive).toBe(false);
         });
         it('should throw an error if the bool argument is not defined as a boolean', function () {
-            chai.assert.throw(function () {
+            expect(function () {
                 acron.setIsCaseSensitive('string');
-            }, Error, 'The bool argument must be defined as a boolean');
+            }).toThrowError('The bool argument must be defined as a boolean');
         });
     });
 
     describe('setWrapper()', function () {
-        it('should be a function', function () {
-            chai.assert.isFunction(acron.setWrapper);
-        });
         it('should accept a single argument defined as a string and set it as the wrapper property', function () {
             acron.setWrapper('a');
-            chai.assert.strictEqual(acron.wrapper, 'a');
+            expect(acron.wrapper).toEqual('a');
         });
         it('should throw an error if the argument is not defined as a string', function () {
-            chai.assert.throw(function () {
+            expect(function () {
                 acron.setWrapper(22);
-            }, Error, 'The wrapper argument must be defined as a string');
-            chai.assert.throw(function () {
+            }).toThrowError('The wrapper argument must be defined as a string');
+            expect(function () {
                 acron.setWrapper({});
-            }, Error, 'The wrapper argument must be defined as a string');
+            }).toThrowError('The wrapper argument must be defined as a string');
         });
         it('should throw an error if the argument is defined as an empty string', function () {
-            chai.assert.throw(function () {
+            expect(function () {
                 acron.setWrapper('');
-            }, Error, 'The wrapper argument cannot be an empty string');
+            }).toThrowError('The wrapper argument cannot be an empty string');
         });
     });
 
     describe('setAttribute()', function () {
-        it('should be a function', function () {
-            chai.assert.isFunction(acron.setAttribute);
-        });
         it('should accept a key argument and a value argument that sets a new attribute in the attributes property', function () {
             acron.setAttribute('id', 'myId');
-            chai.assert.deepEqual(acron.attributes, {
+            expect(acron.attributes).toEqual({
                 id: 'myId'
             });
         });
         it('should throw an error if the key argument is not defined', function () {
-            chai.assert.throw(function () {
+            expect(function () {
                 acron.setAttribute();
-            }, Error, 'The key must be defined as a string');
+            }).toThrowError('The key must be defined as a string');
         });
         it('should throw an error if the key argument is defined as an empty string', function () {
-            chai.assert.throw(function () {
+            expect(function () {
                 acron.setAttribute('', 'myId');
-            }, Error, 'The key must be defined as a string');
+            }).toThrowError('The key must be defined as a string');
         });
         it('should throw an error if the value argument is not defined', function () {
-            chai.assert.throw(function () {
+            expect(function () {
                 acron.setAttribute('id');
-            }, Error, 'The value must be defined');
+            }).toThrowError('The value must be defined');
         });
     });
 
     describe('setAttributes()', function () {
-        it('should be a function', function () {
-            chai.assert.isFunction(acron.setAttributes);
-        });
         it('should accept an object with key and value pairs for each attribute to be added to the attributes property', function () {
             acron.setAttributes({
                 id: 'myId',
                 'class': 'myClass'
             });
-            chai.assert.deepEqual(acron.attributes, {
+            expect(acron.attributes).toEqual({
                 id: 'myId',
                 'class': 'myClass'
             });
         });
         it('should throw an error if the attributes argument is not defined as an object', function () {
-            chai.assert.throw(function () {
+            expect(function () {
                 acron.setAttributes();
-            }, Error, 'The attributes argument must be defined as an object');
-            chai.assert.throw(function () {
+            }).toThrowError('The attributes argument must be defined as an object');
+            expect(function () {
                 acron.setAttributes('');
-            }, Error, 'The attributes argument must be defined as an object');
+            }).toThrowError('The attributes argument must be defined as an object');
         });
     });
 
     describe('hasClass()', function () {
-        it('should be a function', function () {
-            chai.assert.isFunction(acron.hasClass);
-        });
         it('should accept an element and a class string as agruments and return true if the element has the given class', function () {
             var a = document.createElement('a');
             a.className = 'myClass';
-            chai.assert.strictEqual(acron.hasClass(a, 'myClass'), true);
+            expect(acron.hasClass(a, 'myClass')).toBe(true);
         });
         it('should accept an element and a class string as agruments and return false if the element does not have the given class', function () {
             var a = document.createElement('a');
             a.className = 'myClass';
-            chai.assert.strictEqual(acron.hasClass(a, 'anotherClass'), false);
+            expect(acron.hasClass(a, 'anotherClass')).toBe(false);
         });
         it('should throw an error if the element argument is not defined as an element', function () {
-            chai.assert.throw(function () {
+            expect(function () {
                 acron.hasClass();
-            }, Error, 'The element must be defined as an element');
+            }).toThrowError('The element must be defined as an element');
         });
         it('should throw an error if the className argument is not defined as a string', function () {
             var a = document.createElement('a');
-            chai.assert.throw(function () {
+            expect(function () {
                 acron.hasClass(a);
-            }, Error, 'The className must be defined as a string');
+            }).toThrowError('The className must be defined as a string');
         });
     });
 
     describe('isElementSet()', function () {
-        it('should be a function', function () {
-            chai.assert.isFunction(acron.isElementSet);
-        });
         it('should return true if an element has been set to the instance', function () {
             var a = document.createElement('a');
             acron.element = a;
-            chai.assert.isTrue(acron.isElementSet());
+            expect(acron.isElementSet()).toBe(true);
         });
         it('should return false if an element has not been defined to the instance', function () {
-            chai.assert.isFalse(acron.isElementSet());
+            expect(acron.isElementSet()).toBe(false);
         });
     });
 
     describe('isPatternSet()', function () {
-        it('should be a function', function () {
-            chai.assert.isFunction(acron.isPatternSet);
-        });
         it('should return true if a pattern has been set to the instance', function () {
             acron.pattern = /mypattern/g;
-            chai.assert.isTrue(acron.isPatternSet());
+            expect(acron.isPatternSet()).toBe(true);
         });
         it('should return false if a pattern has not been set to the instance', function () {
-            chai.assert.isFalse(acron.isPatternSet());
+            expect(acron.isPatternSet()).toBe(false);
         });
     });
 
     describe('isWrapperSet()', function () {
-        it('should be a function', function () {
-            chai.assert.isFunction(acron.isWrapperSet);
-        });
         it('should return true if a wrapper is defined to the instance', function () {
             acron.wrapper = 'p';
-            chai.assert.isTrue(acron.isWrapperSet());
+            expect(acron.isWrapperSet()).toBe(true);
         });
         it('should return false if a wrapper is not defined to the instance', function () {
             acron.wrapper = undefined;
-            chai.assert.isFalse(acron.isWrapperSet());
+            expect(acron.isWrapperSet()).toBe(false);
         });
     });
 
     describe('addClassToElement()', function () {
-        it('should be a function', function () {
-            chai.assert.isFunction(acron.addClassToElement);
-        });
         it('should accept an element argument that has no existing class attribute and a className argument and set it to the class attribute', function () {
             var a = document.createElement('a');
             acron.addClassToElement(a, 'myClass');
-            chai.assert.strictEqual(a.className, 'myClass');
+            expect(a.className).toEqual('myClass');
         });
         it('should accept an element argument that has an existing class attribute and a className argument and add it to the class attribute', function () {
             var a = document.createElement('a'),
@@ -386,34 +342,31 @@ describe('Acronymizer', function () {
             a.className = 'myClass';
             acron.addClassToElement(a, 'mySecondClass');
             classes = a.className.split(' ');
-            chai.assert.strictEqual(classes[0], 'myClass');
-            chai.assert.strictEqual(classes[1], 'mySecondClass');
+            expect(classes[0]).toEqual('myClass');
+            expect(classes[1]).toEqual('mySecondClass');
         });
         it('should accept an element argument that has an existing class attribute and a className argument that matches the class attribute and do nothing', function () {
             var a = document.createElement('a');
             a.className = 'myClass';
             acron.addClassToElement(a, 'myClass');
-            chai.assert.strictEqual(a.className, 'myClass');
+            expect(a.className).toEqual('myClass');
         });
         it('should throw an error if the element argument is not defined as an element', function () {
-            chai.assert.throw(function () {
+            expect(function () {
                 acron.addClassToElement(undefined, 'myClass');
-            }, Error, 'The element argument must be defined as an element');
-            chai.assert.throw(function () {
+            }).toThrowError('The element argument must be defined as an element');
+            expect(function () {
                 acron.addClassToElement({}, 'myClass');
-            }, Error, 'The element argument must be defined as an element');
+            }).toThrowError('The element argument must be defined as an element');
         });
         it('should throw an error if the className argument is not defined as a string', function () {
-            chai.assert.throw(function () {
+            expect(function () {
                 acron.addClassToElement(document.createElement('a'), undefined);
-            }, Error, 'The className argument must be defined as a string');
+            }).toThrowError('The className argument must be defined as a string');
         });
     });
 
     describe('addAttributesToElement()', function () {
-        it('should be a function', function () {
-            chai.assert.isFunction(acron.addAttributesToElement);
-        });
         it('should add all the given attributes to the given element argument', function () {
             var element = document.createElement('a'),
                 attributes = {
@@ -422,52 +375,46 @@ describe('Acronymizer', function () {
                 };
 
             acron.addAttributesToElement(element, attributes);
-            chai.assert.strictEqual(element.className, 'myClass');
-            chai.assert.strictEqual(element.title, 'myTitle');
+            expect(element.className).toEqual('myClass');
+            expect(element.title).toEqual('myTitle');
         });
         it('should throw an error if the element argument is not defined as an element', function () {
-            chai.assert.throw(function () {
+            expect(function () {
                 acron.addAttributesToElement(undefined, {});
-            }, Error, 'The element argument must be defined as an element');
+            }).toThrowError('The element argument must be defined as an element');
         });
         it('should throw an error if the attributes argument is not defined as an object', function () {
-            chai.assert.throw(function () {
+            expect(function () {
                 acron.addAttributesToElement(document.createElement('a'), 'string');
-            }, Error, 'The attributes argument must be defined as an object');
+            }).toThrowError('The attributes argument must be defined as an object');
         });
     });
 
-    describe('setEvent()', function () {
-        it('should be a function', function () {
-            chai.assert.isFunction(acron.setEvent);
-        });
+    describe('bind()', function () {
         it('should accept a name argument and a func argument and set them to the events property', function () {
-            acron.setEvent('myEvent', function () {});
-            chai.assert.isFunction(acron.events.myEvent);
+            acron.bind('myEvent', function () {});
+            expect(typeof acron.events.myEvent).toEqual('function');
         });
         it('should throw an error if the name argument is not defined as a string', function () {
-            chai.assert.throw(function () {
-                acron.setEvent(undefined, function () {});
-            }, Error, 'The name argument must be defined as a string');
+            expect(function () {
+                acron.bind(undefined, function () {});
+            }).toThrowError('The name argument must be defined as a string');
         });
         it('should throw an error of the func argument is not defined as a function', function () {
-            chai.assert.throw(function () {
-                acron.setEvent('myEvent', undefined);
-            }, Error, 'The func argument must be defined as a function');
+            expect(function () {
+                acron.bind('myEvent', undefined);
+            }).toThrowError('The func argument must be defined as a function');
         });
     });
 
-    describe('fireEvent()', function () {
-        it('should be a function', function () {
-            chai.assert.isFunction(acron.fireEvent);
-        });
+    describe('trigger()', function () {
         it('should accept a name argument and execute the stored event in the events property', function () {
             var num = 1;
             acron.events.myEvent = function () {
                 num = 2;
             };
-            acron.fireEvent('myEvent');
-            chai.assert.strictEqual(num, 2);
+            acron.trigger('myEvent');
+            expect(num).toEqual(2);
         });
         it('should accept an args argument defined as an array and provide them to the executed function', function () {
             var arg1Value,
@@ -480,27 +427,25 @@ describe('Acronymizer', function () {
                 arg3Value = arg3;
             };
 
-            acron.fireEvent('myEvent', ['string', 52, {}]);
-            chai.assert.strictEqual(arg1Value, 'string');
-            chai.assert.strictEqual(arg2Value, 52);
-            chai.assert.deepEqual(arg3Value, {});
+            acron.trigger('myEvent', ['string', 52, {}]);
+            expect(arg1Value).toEqual('string');
+            expect(arg2Value).toEqual(52);
+            expect(arg3Value).toEqual({});
         });
         it('should not throw an error if the event does not exist', function () {
-            chai.assert.doesNotThrow(function () {
-                acron.fireEvent('string');
-            });
+            expect(function () {
+                acron.trigger('string');
+            }).not.toThrowError();
         });
     });
 
     describe('getStringPositions()', function () {
-        it('should be a function', function () {
-            chai.assert.isFunction(acron.getStringPositions);
-        });
+
         it('should return the positions of the given global regexp argument in the given text argument', function () {
             var text = 'this is a string with string mentioned twice',
                 regexp = /string/g;
 
-            chai.assert.deepEqual(acron.getStringPositions(text, regexp), [{
+            expect(acron.getStringPositions(text, regexp)).toEqual([{
                 text: 'string',
                 length: 6,
                 index: 10
@@ -514,18 +459,16 @@ describe('Acronymizer', function () {
             var text = 'this is a string with string mentioned twice',
                 regexp = /string/;
 
-            chai.assert.deepEqual(acron.getStringPositions(text, regexp), [10]);
+            expect(acron.getStringPositions(text, regexp)).toEqual([10]);
         });
         it('should return an empty array if the text argument or regexp argument are not defined', function () {
-            chai.assert.deepEqual(acron.getStringPositions('text'), []);
-            chai.assert.deepEqual(acron.getStringPositions(undefined, /regex/), []);
+            expect(acron.getStringPositions('text')).toEqual([]);
+            expect(acron.getStringPositions(undefined, /regex/)).toEqual([]);
         });
     });
 
-    describe('go()', function () {
-        it('should be a function', function () {
-            chai.assert.isFunction(acron.go);
-        });
+    describe('init()', function () {
+
         it('should wrap the set pattern in the set node with any set attributes', function () {
             var p = document.createElement('p'),
                 newElement;
@@ -534,10 +477,10 @@ describe('Acronymizer', function () {
             acron.setElement(p);
             acron.setAttribute('className', 'myClass');
             acron.setPattern('some');
-            acron.go();
+            acron.init();
             newElement = p.getElementsByTagName('abbr');
-            chai.assert.strictEqual(newElement.length, 1);
-            chai.expect(newElement[0].className.indexOf('myClass')).to.be.above(-1);
+            expect(newElement.length).toEqual(1);
+            expect(newElement[0].className.indexOf('myClass')).toBeGreaterThan(-1);
         });
         it('should execute the beforeWrap event', function () {
             var p = document.createElement('p'),
@@ -546,11 +489,11 @@ describe('Acronymizer', function () {
             p.innerHTML = 'This is some text';
             acron.setElement(p);
             acron.setPattern('some');
-            acron.setEvent('beforeWrap', function () {
+            acron.bind('beforeWrap', function () {
                 eventFired = true;
             });
-            acron.go();
-            chai.assert.isTrue(eventFired);
+            acron.init();
+            expect(eventFired).toBe(true);
         });
         it('should provide the text that is about to be wrapped as the first argument of beforeWrap', function () {
             var p = document.createElement('p'),
@@ -559,11 +502,11 @@ describe('Acronymizer', function () {
             p.innerHTML = 'This is some text';
             acron.setElement(p);
             acron.setPattern('some');
-            acron.setEvent('beforeWrap', function (text) {
+            acron.bind('beforeWrap', function (text) {
                 firstArgumentValue = text;
             });
-            acron.go();
-            chai.assert.strictEqual(firstArgumentValue, 'some');
+            acron.init();
+            expect(firstArgumentValue).toBe('some');
         });
         it('should provide the wrapper that is about to be wrap the text as the second argument of beforeWrap', function () {
             var p = document.createElement('p'),
@@ -573,12 +516,12 @@ describe('Acronymizer', function () {
             acron.setElement(p);
             acron.setPattern('some');
             acron.setWrapper('span');
-            acron.setEvent('beforeWrap', function (text, wrapper) {
+            acron.bind('beforeWrap', function (text, wrapper) {
                 secondArgumentValue = wrapper;
             });
-            acron.go();
-            chai.assert.strictEqual(secondArgumentValue.nodeType, 1);
-            chai.assert.strictEqual(secondArgumentValue.nodeName, 'SPAN');
+            acron.init();
+            expect(secondArgumentValue.nodeType).toBe(1);
+            expect(secondArgumentValue.nodeName).toBe('SPAN');
         });
         it('should execute the afterWrap event', function () {
             var p = document.createElement('p'),
@@ -587,11 +530,11 @@ describe('Acronymizer', function () {
             p.innerHTML = 'This is some text';
             acron.setElement(p);
             acron.setPattern('some');
-            acron.setEvent('afterWrap', function () {
+            acron.bind('afterWrap', function () {
                 eventFired = true;
             });
-            acron.go();
-            chai.assert.isTrue(eventFired);
+            acron.init();
+            expect(eventFired).toBe(true);
         });
         it('should provide the text that was wrapped as the first argument of afterWrap', function () {
             var p = document.createElement('p'),
@@ -601,11 +544,11 @@ describe('Acronymizer', function () {
             acron.setElement(p);
             acron.setAttribute('className', 'myClass');
             acron.setPattern('some');
-            acron.setEvent('afterWrap', function (text) {
+            acron.bind('afterWrap', function (text) {
                 firstArgumentValue = text;
             });
-            acron.go();
-            chai.assert.strictEqual(firstArgumentValue, 'some');
+            acron.init();
+            expect(firstArgumentValue).toEqual('some');
         });
         it('should provide the text wrapper as the second argument of afterWrap', function () {
             var p = document.createElement('p'),
@@ -615,13 +558,14 @@ describe('Acronymizer', function () {
             acron.setElement(p);
             acron.setPattern('some');
             acron.setWrapper('span');
-            acron.setEvent('afterWrap', function (text, wrapper) {
+            acron.bind('afterWrap', function (text, wrapper) {
                 secondArgumentValue = wrapper;
             });
-            acron.go();
-            chai.assert.strictEqual(secondArgumentValue.nodeType, 1);
-            chai.assert.strictEqual(secondArgumentValue.nodeName, 'SPAN');
+            acron.init();
+            expect(secondArgumentValue.nodeType).toEqual(1);
+            expect(secondArgumentValue.nodeName).toEqual('SPAN');
         });
+
         it('should execute the afterWrapAll event', function () {
             var p = document.createElement('p'),
                 eventFired = false;
@@ -629,12 +573,13 @@ describe('Acronymizer', function () {
             p.innerHTML = 'This is some text';
             acron.setElement(p);
             acron.setPattern('some');
-            acron.setEvent('afterWrapAll', function () {
+            acron.bind('afterWrapAll', function () {
                 eventFired = true;
             });
-            acron.go();
-            chai.assert.isTrue(eventFired);
+            acron.init();
+            expect(eventFired).toBe(true);
         });
+
         it('should provide an array of all the wrap elements that were added as the first argument of afterWrapAll', function () {
             var p = document.createElement('p'),
                 firstArgumentValue;
@@ -644,37 +589,43 @@ describe('Acronymizer', function () {
             acron.setAttribute('className', 'myClass');
             acron.setPattern('some');
             acron.setWrapper('a');
-            acron.setEvent('afterWrapAll', function (wrappers) {
+            acron.bind('afterWrapAll', function (wrappers) {
                 firstArgumentValue = wrappers;
             });
-            acron.go();
-            chai.assert.isArray(firstArgumentValue);
-            chai.assert.strictEqual(firstArgumentValue.length, 2);
-            chai.assert.strictEqual(firstArgumentValue[0].nodeName, 'A');
+            acron.init();
+
+            expect(firstArgumentValue.length).toEqual(2);
+            expect(firstArgumentValue[0].nodeName).toEqual('A');
         });
+
         it('should throw an error if the element has not been set', function () {
             acron.element = undefined;
             acron.pattern = 'myPattern';
             acron.wrapper = 'a';
-            chai.assert.throw(function () {
-                acron.go();
-            }, Error, 'An element has not been defined. Use the setElement() method to set an element');
+
+            expect(function () {
+                acron.init();
+            }).toThrowError('An element has not been defined. Use the setElement() method to set an element');
         });
+
         it('should throw an error if the pattern has not been set', function () {
             acron.element = document.createElement('div');
             acron.pattern = undefined;
             acron.wrapper = 'a';
-            chai.assert.throw(function () {
-                acron.go();
-            }, Error, 'A pattern has not been defined. Use the set pattern method to set a pattern');
+
+            expect(function () {
+                acron.init();
+            }).toThrowError('A pattern has not been defined. Use the set pattern method to set a pattern');
         });
+
         it('should throw an error if the wrapper has not been set', function () {
             acron.element = document.createElement('div');
             acron.pattern = /myPattern/gi;
             acron.wrapper = undefined;
-            chai.assert.throw(function () {
-                acron.go();
-            }, Error, 'A wrapper has not been defined. Use the setWrapper method to set a wrapper');
+
+            expect(function () {
+                acron.init();
+            }).toThrowError('A wrapper has not been defined. Use the setWrapper method to set a wrapper');
         });
     });
 

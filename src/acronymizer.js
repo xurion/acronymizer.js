@@ -1,5 +1,5 @@
-/*jslint maxerr: 50, indent: 4 */
-/*globals window, document*/
+
+/*globals document*/
 
 /**
  * Dean James' acronymizer.js.
@@ -10,6 +10,7 @@
  *  wrapper - Sets a custom wrapper type. Defaults to abbr.
  */
 function Acronymizer(settings) {
+
     'use strict';
 
     settings = settings || {};
@@ -40,7 +41,7 @@ function Acronymizer(settings) {
 
         error: function (errorMessage) {
             errorMessage = errorMessage || 'Unknown error';
-            throw new Error('Acronymize: ' + errorMessage);
+            throw new Error(errorMessage);
         },
 
         isElement: function (element) {
@@ -51,7 +52,7 @@ function Acronymizer(settings) {
         },
 
         isTextNode: function (node) {
-            return (node !== undefined && this.isElement(node) && node.nodeType === 3);
+            return node !== undefined && this.isElement(node) && node.nodeType === 3;
         },
 
         isRegExp: function (regexp) {
@@ -66,11 +67,14 @@ function Acronymizer(settings) {
         },
 
         setPattern: function (pattern) {
-            if (pattern === undefined || (typeof pattern !== 'string' && !this.isRegExp(pattern))) {
+            if (pattern === undefined) {
+                this.error('Pattern is undefined');
+            }
+            if (typeof pattern !== 'string' && !this.isRegExp(pattern)) {
                 this.error('Pattern must be defined as a string or regular expression');
             }
 
-            var modifiers = 'g' + ((this.caseSensitive) ? '' : 'i');
+            var modifiers = 'g' + (this.caseSensitive ? '' : 'i');
 
             if (this.isRegExp(pattern)) {
                 pattern = new RegExp(pattern.source, modifiers);
@@ -180,7 +184,7 @@ function Acronymizer(settings) {
             return element;
         },
 
-        setEvent: function (name, func) {
+        bind: function (name, func) {
             if (typeof name !== 'string') {
                 this.error('The name argument must be defined as a string');
             }
@@ -190,7 +194,7 @@ function Acronymizer(settings) {
             this.events[name] = func;
         },
 
-        fireEvent: function (name, args) {
+        trigger: function (name, args) {
             if (typeof this.events[name] === 'function') {
                 this.events[name].apply(this, args);
             }
@@ -223,8 +227,12 @@ function Acronymizer(settings) {
         /**
          * Wraps the given pattern in the given node with the given nodeType.
          */
-        innerHighlight: function (node, pattern, wrapperType, wrapperAttributes) {
+        innerHighlight: function (options) {
             var skip = 0,
+                node = options.node,
+                pattern = options.pattern,
+                wrapperType = options.wrapper,
+                wrapperAttributes = options.wrapperAttributes,
                 matches,
                 splitPosition,
                 splitLength,
@@ -234,6 +242,7 @@ function Acronymizer(settings) {
                 i,
                 x;
 
+            /* jshint maxdepth:false */
             if (this.isTextNode(node) && !this.hasClass(node.parentNode, 'acronymized')) {
                 //pos = node.data.indexOf(pattern);
                 matches = this.getStringPositions(node.data, pattern);
@@ -244,11 +253,11 @@ function Acronymizer(settings) {
                     remainingText = split1.splitText(splitLength); //leaves textNode as sets remainingText as " text that has the ......."
                     wrapper = document.createElement(wrapperType);
                     this.addAttributesToElement(wrapper, wrapperAttributes);
-                    this.fireEvent('beforeWrap', [split1.data, wrapper]);
+                    this.trigger('beforeWrap', [split1.data, wrapper]);
                     this.addClassToElement(wrapper, 'acronymized');
                     wrapper.innerHTML = matches[0].text;
                     split1.parentNode.replaceChild(wrapper, split1);
-                    this.fireEvent('afterWrap', [split1.data, wrapper]);
+                    this.trigger('afterWrap', [split1.data, wrapper]);
                     this.wrappers.push(wrapper);
                     if (matches.length > 1) {
                         x = matches[0].index + matches[0].length; //sets the current point in which the replacement has taken place
@@ -260,11 +269,11 @@ function Acronymizer(settings) {
                             x = x + (matches[i].index + matches[i].length); //sets the current point in which the replacement has taken place
                             wrapper = document.createElement(wrapperType);
                             this.addAttributesToElement(wrapper, wrapperAttributes);
-                            this.fireEvent('beforeWrap', [split1.data, wrapper]);
+                            this.trigger('beforeWrap', [split1.data, wrapper]);
                             this.addClassToElement(wrapper, 'acronymized');
                             wrapper.innerHTML = matches[i].text;
                             split1.parentNode.replaceChild(wrapper, split1);
-                            this.fireEvent('afterWrap', [split1.data, wrapper]);
+                            this.trigger('afterWrap', [split1.data, wrapper]);
                             this.wrappers.push(wrapper);
                         }
                     }
@@ -272,13 +281,19 @@ function Acronymizer(settings) {
                 }
             } else if (node.nodeType === 1 && node.childNodes && !/(script|style)/i.test(node.tagName)) {
                 for (i = 0; i < node.childNodes.length; i = i + 1) {
-                    i += this.innerHighlight(node.childNodes[i], pattern, wrapperType, wrapperAttributes);
+                    i += this.innerHighlight({
+                        node: node.childNodes[i],
+                        pattern: pattern,
+                        wrapper: wrapperType,
+                        wrapperAttributes: wrapperAttributes
+                    });
                 }
             }
+            /* jshint maxdepth:3 */
             return skip;
         },
 
-        go: function () {
+        init: function () {
             if (!this.isElementSet()) {
                 this.error('An element has not been defined. Use the setElement() method to set an element');
             }
@@ -288,8 +303,14 @@ function Acronymizer(settings) {
             if (!this.isWrapperSet()) {
                 this.error('A wrapper has not been defined. Use the setWrapper method to set a wrapper');
             }
-            this.innerHighlight(this.element, this.pattern, this.wrapper, this.attributes);
-            this.fireEvent('afterWrapAll', [this.wrappers]);
+
+            this.innerHighlight({
+                node: this.element,
+                pattern: this.pattern,
+                wrapper: this.wrapper,
+                wrapperAttributes: this.attributes
+            });
+            this.trigger('afterWrapAll', [this.wrappers]);
             this.wrappers = [];
         }
 
