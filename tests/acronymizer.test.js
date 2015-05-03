@@ -628,10 +628,18 @@ describe('Acronymizer', function () {
                 acron.init();
             }).toThrowError('A wrapper has not been defined. Use the setWrapper method to set a wrapper');
         });
-    });
 
-    describe('init()', function () {
+        it('should set the wrappers property to an empty array', function () {
+            var p = document.createElement('p');
 
+            p.innerHTML = 'This is some text that mentions some twice';
+            acron.setElement(p);
+            acron.setAttribute('className', 'myClass');
+            acron.setPattern('some');
+            acron.setWrapper('a');
+            acron.init();
 
+            expect(acron.wrappers).toEqual([]);
+        });
     });
 });
