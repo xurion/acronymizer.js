@@ -242,50 +242,52 @@ function Acronymizer(settings) {
                 x;
 
             /* jshint maxdepth:false */
-            if (this.isTextNode(node) && !this.hasClass(node.parentNode, 'acronymized')) {
-                //pos = node.data.indexOf(pattern);
-                matches = this.getStringPositions(node.data, pattern);
-                if (matches.length > 0) {
-                    splitPosition = matches[0].index;
-                    splitLength = matches[0].length;
-                    split1 = node.splitText(splitPosition); //slices away "This is " and leaves textNode as "some text that....."
-                    remainingText = split1.splitText(splitLength); //leaves textNode as sets remainingText as " text that has the ......."
-                    wrapper = document.createElement(wrapperType);
-                    this.addAttributesToElement(wrapper, wrapperAttributes);
-                    this.trigger('beforeWrap', [split1.data, wrapper]);
-                    this.addClassToElement(wrapper, 'acronymized');
-                    wrapper.innerHTML = matches[0].text;
-                    split1.parentNode.replaceChild(wrapper, split1);
-                    this.trigger('afterWrap', [split1.data, wrapper]);
-                    this.wrappers.push(wrapper);
-                    if (matches.length > 1) {
-                        x = matches[0].index + matches[0].length; //sets the current point in which the replacement has taken place
-                        for (i = 1; i < matches.length; i = i + 1) {
-                            splitPosition = matches[i].index - x;
-                            splitLength = matches[i].length;
-                            split1 = remainingText.splitText(splitPosition); //slices away "This is " and leaves textNode as "some text that....."
-                            remainingText = split1.splitText(splitLength); //leaves textNode as sets remainingText as " text that has the ......."
-                            x = x + (matches[i].index + matches[i].length); //sets the current point in which the replacement has taken place
-                            wrapper = document.createElement(wrapperType);
-                            this.addAttributesToElement(wrapper, wrapperAttributes);
-                            this.trigger('beforeWrap', [split1.data, wrapper]);
-                            this.addClassToElement(wrapper, 'acronymized');
-                            wrapper.innerHTML = matches[i].text;
-                            split1.parentNode.replaceChild(wrapper, split1);
-                            this.trigger('afterWrap', [split1.data, wrapper]);
-                            this.wrappers.push(wrapper);
+            if ((" " + options.node.className + " ").replace(/[\n\t]/g, " ").indexOf(" acronymizer-skip ") === -1) {
+                if (this.isTextNode(node) && !this.hasClass(node.parentNode, 'acronymized')) {
+                    //pos = node.data.indexOf(pattern);
+                    matches = this.getStringPositions(node.data, pattern);
+                    if (matches.length > 0) {
+                        splitPosition = matches[0].index;
+                        splitLength = matches[0].length;
+                        split1 = node.splitText(splitPosition); //slices away "This is " and leaves textNode as "some text that....."
+                        remainingText = split1.splitText(splitLength); //leaves textNode as sets remainingText as " text that has the ......."
+                        wrapper = document.createElement(wrapperType);
+                        this.addAttributesToElement(wrapper, wrapperAttributes);
+                        this.trigger('beforeWrap', [split1.data, wrapper]);
+                        this.addClassToElement(wrapper, 'acronymized');
+                        wrapper.innerHTML = matches[0].text;
+                        split1.parentNode.replaceChild(wrapper, split1);
+                        this.trigger('afterWrap', [split1.data, wrapper]);
+                        this.wrappers.push(wrapper);
+                        if (matches.length > 1) {
+                            x = matches[0].index + matches[0].length; //sets the current point in which the replacement has taken place
+                            for (i = 1; i < matches.length; i = i + 1) {
+                                splitPosition = matches[i].index - x;
+                                splitLength = matches[i].length;
+                                split1 = remainingText.splitText(splitPosition); //slices away "This is " and leaves textNode as "some text that....."
+                                remainingText = split1.splitText(splitLength); //leaves textNode as sets remainingText as " text that has the ......."
+                                x = x + (matches[i].index + matches[i].length); //sets the current point in which the replacement has taken place
+                                wrapper = document.createElement(wrapperType);
+                                this.addAttributesToElement(wrapper, wrapperAttributes);
+                                this.trigger('beforeWrap', [split1.data, wrapper]);
+                                this.addClassToElement(wrapper, 'acronymized');
+                                wrapper.innerHTML = matches[i].text;
+                                split1.parentNode.replaceChild(wrapper, split1);
+                                this.trigger('afterWrap', [split1.data, wrapper]);
+                                this.wrappers.push(wrapper);
+                            }
                         }
+                        skip = 1;
                     }
-                    skip = 1;
-                }
-            } else if (node.nodeType === 1 && node.childNodes && !/(script|style)/i.test(node.tagName)) {
-                for (i = 0; i < node.childNodes.length; i = i + 1) {
-                    i += this.innerHighlight({
-                        node: node.childNodes[i],
-                        pattern: pattern,
-                        wrapper: wrapperType,
-                        wrapperAttributes: wrapperAttributes
-                    });
+                } else if (node.nodeType === 1 && node.childNodes && !/(script|style)/i.test(node.tagName)) {
+                    for (i = 0; i < node.childNodes.length; i = i + 1) {
+                        i += this.innerHighlight({
+                            node: node.childNodes[i],
+                            pattern: pattern,
+                            wrapper: wrapperType,
+                            wrapperAttributes: wrapperAttributes
+                        });
+                    }
                 }
             }
             /* jshint maxdepth:3 */

@@ -641,5 +641,25 @@ describe('Acronymizer', function () {
 
             expect(acron.wrappers).toEqual([]);
         });
+
+        it('should not acronymize elements that have the acronymizer-skip class', function () {
+            var p = document.createElement('p');
+
+            p.innerHTML = 'This is some text';
+            p.className = 'acronymizer-skip';
+            acron.setElement(p);
+            acron.setAttribute('className', 'myClass');
+            acron.setPattern('some');
+            acron.setWrapper('a');
+            acron.init();
+
+            expect(p.getElementsByTagName('a').length).toEqual(0);
+
+            p.innerHTML = 'This is some text with a nested <span class="acronymizer-skip">span containing some more text</span>';
+            p.className = '';
+            acron.init();
+
+            expect(p.getElementsByTagName('a').length).toEqual(1);
+        });
     });
 });
