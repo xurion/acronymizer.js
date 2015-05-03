@@ -6,6 +6,7 @@ describe('Acronymizer', function () {
     'use strict';
 
     var acron;
+
     beforeEach(function () {
         acron = new Acronymizer();
     });

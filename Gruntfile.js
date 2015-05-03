@@ -6,17 +6,9 @@ module.exports = function (grunt) {
 
     grunt.initConfig({
         jshint: {
-            files: ['Gruntfile.js', 'src/**/*.js', 'tests/**/*.js'],
+            files: ['Gruntfile.js', 'src/*.js', 'tests/*.js'],
             options: {
                 jshintrc: '.jshintrc'
-            }
-        },
-        jslint: {
-            client: {
-                src: ['Gruntfile.js', 'src/**/*.js', 'tests/**/*.js'],
-                directives: {
-                    browser: true
-                }
             }
         },
         copy: {
@@ -24,8 +16,8 @@ module.exports = function (grunt) {
                 files: [
                     {
                         expand: true,
-                        src: ['src/js/**/*.js'],
-                        dest: 'dist/js/',
+                        src: ['src/acronymizer.js'],
+                        dest: 'dist/',
                         filter: 'isFile',
                         flatten: true
                     }
@@ -35,7 +27,7 @@ module.exports = function (grunt) {
         uglify: {
             main: {
                 files: {
-                    'dist/js/acronymizer.min.js': ['dist/js/acronymizer.js']
+                    'dist/acronymizer.min.js': ['src/acronymizer.js']
                 }
             }
         },
@@ -50,7 +42,6 @@ module.exports = function (grunt) {
     });
 
     grunt.loadNpmTasks('grunt-contrib-jshint');
-    grunt.loadNpmTasks('grunt-jslint');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-uglify');
@@ -58,7 +49,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('build', [
         'jshint',
-        'jslint',
+        'karma',
         'clean',
         'copy',
         'uglify'
@@ -66,8 +57,6 @@ module.exports = function (grunt) {
 
     grunt.registerTask('test', [
         'jshint',
-        'jslint',
         'karma'
     ]);
-
 };
