@@ -3,7 +3,7 @@
     <head>
         <title>Acronymizer - Demo</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <script type="text/javascript" src="acronymizer.js"></script>
+        <script type="text/javascript" src="dist/acronymizer.min.js"></script>
         <script type="text/javascript">
             window.onload = function () {
                 var p = document.getElementById('pElement'),
@@ -17,7 +17,7 @@
                         }
                     });
 
-                acron.go();
+                acron.init();
 
                 acron = new Acronymizer({
                     element: div1,
@@ -26,14 +26,14 @@
                         title: 'element'
                     }
                 });
-                acron.go();
+                acron.init();
 
                 acron = new Acronymizer({
                     element: p2,
                     pattern: 'ninja',
                     wrapper: 'strong'
                 });
-                acron.go();
+                acron.init();
             };
         </script>
     </head>
